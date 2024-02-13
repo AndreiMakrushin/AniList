@@ -121,7 +121,7 @@ const updateUser = async () => {
         <input type="file" accept=".jpeg, .png, .jpg" @change="uploadAvatar" />
         <img :src="preloadFile ? preloadFile : ''" alt="" />
       </div>
-      <button @click="addAvatar">загркзить аву</button>
+      <button @click="addAvatar" class="py-[10px] px-[20px] text-white bg-purple-600 rounded-[10px]">загрузить аву</button>
     </div>
   </div>
 

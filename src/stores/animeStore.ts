@@ -14,7 +14,6 @@ export const useAnimeStore = defineStore('animestore', () => {
     if (error) {
       console.log('Неправильный логин или пароль')
     }
-    console.log(data)
     if (!data.user) return
     const { data: existingUser } = await supabase.from('users').select().eq('email', email).single()
 
@@ -92,6 +91,9 @@ export const useAnimeStore = defineStore('animestore', () => {
     const { error } = await supabase.auth.resetPasswordForEmail(email)
     if (error) return console.error(error)
   }
+
+ 
+
 
   return { login, registerUser, user, getUser, logout, recoverPassword }
 })
