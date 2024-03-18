@@ -1,11 +1,21 @@
 import { defineStore } from 'pinia'
 import { supabase } from '../supabase'
 import type { User, Credentials } from './types'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch } from 'vue'
 
 export const useAnimeStore = defineStore('animestore', () => {
   const user = ref<User>(null)
-  const modal = ref<boolean>(true)
+  const modal = ref<boolean>(false)
+  const authRegModal = ref<boolean>(true)
+
+  watch(user, () => {
+    if (user.value) {
+      authRegModal.value = false
+    }
+    else{
+      authRegModal.value = true
+    }
+  })
   const login = async (email: string, password: string): Promise<void> => {
     if (!email && !password) return
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -56,8 +66,9 @@ export const useAnimeStore = defineStore('animestore', () => {
   }
 
   const getUser = async (): Promise<void> => {
+    
     const unauthorized = await supabase.auth.getSession()
-
+    console.log(unauthorized);
     if (unauthorized.data.session === null) return
 
     const { data, error } = await supabase.auth.getUser()
@@ -105,5 +116,5 @@ export const useAnimeStore = defineStore('animestore', () => {
   }
 
 
-  return { login, registerUser, user, getUser, logout, recoverPassword, modal }
+  return { login, registerUser, user, getUser, logout, recoverPassword, modal, authRegModal }
 })

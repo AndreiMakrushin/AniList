@@ -3,6 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useAnimeStore } from '../stores/animeStore'
 import { supabase } from '../supabase'
 import UploadAvatar from '@/widgets/UploadAvatar.vue'
+import RegistrationAndAutorisationModal from '../widgets/modals/RegistrationAndAutorisationModal.vue'
 
 const animeStore = useAnimeStore()
 
@@ -10,18 +11,18 @@ const name = ref(null)
 const email = ref(null)
 const password = ref(null)
 
-const login = () => {
+/* const login = () => {
   animeStore.login(email.value, password.value)
-}
+} */
 
-const registration = () => {
+/* const registration = () => {
   const register = {
     name: name.value,
     email: email.value,
     password: password.value
   }
   animeStore.registerUser(register)
-}
+} */
 
 const deleteAvatar = async () => {
   await supabase.from('users').update({ avatar_url: null }).match({ id: animeStore.user.id })
@@ -50,11 +51,7 @@ const updateUser = async () => {
       home
     </main>
     <main v-else>
-      <div class="text-green-200 font-semibold">тут будет модалка профиля</div>
-      <h1 class="text-brand">имя пользователя:</h1>
-      <h2 class="text-orange-500">{{ animeStore.user.name }}</h2>
       <button @click="animeStore.logout"><strong>выйти с аккуунта</strong></button>
-      сдесь будет аватар пользователя
       <div class="avatar">
         <img
           class="rounded-[50%] object-cover overflow-hidden w-[100px] h-[100px]"
@@ -74,25 +71,10 @@ const updateUser = async () => {
     <button @click="updateUser" class="p-[10px] border-green-500 border-[1px]">
       сменить пароль
     </button>
-
-    тут модалка для загрузки аватарки
-  </div>
-
-  форма пока что регистрации и авторизации
-
-  <div class="flex flex-col p-[10px] w-[300px]">
-    {{ name }}
-    <input
-      type="text"
-      v-model="name"
-      class="border border-red-400"
-      placeholder="имя (не заполняется при авторизации)"
-    />
-    <input type="email" v-model="email" class="border border-red-400" placeholder="имеил" />
-    <input type="password" v-model="password" class="border border-red-400" placeholder="пароль" />
   </div>
 
   <UploadAvatar />
+  <RegistrationAndAutorisationModal />
 </template>
 
 <style scoped>

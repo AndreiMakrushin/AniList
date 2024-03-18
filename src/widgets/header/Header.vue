@@ -16,7 +16,7 @@ const animeStore = useAnimeStore()
       />
       <input type="text" class="flex grow font-normal text-[22px] pl-[10px] rounded-[5px] outline-none focus:ring-[1px] focus:ring-red-500"/>
     </div>
-    <nav class="flex flex-row gap-3">
+    <nav class="flex flex-row gap-3 text-[20px]">
       <RouterLink to="/" active-class="active">Home</RouterLink>
       <RouterLink to="/about" active-class="active">About</RouterLink>
     </nav>
