@@ -1,11 +1,10 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useAnimeStore } from '../stores/animeStore'
 import { supabase } from '../supabase'
+import UploadAvatar from '@/widgets/UploadAvatar.vue'
 
 const animeStore = useAnimeStore()
-const avatar = ref(null)
-const preloadFile = ref(null)
 
 const name = ref(null)
 const email = ref(null)
@@ -24,64 +23,21 @@ const registration = () => {
   animeStore.registerUser(register)
 }
 
-const uploadAvatar = (e) => {
-  const file = e.target.files[0]
-  if (file) {
-    avatar.value = file
-    const reader = new FileReader()
-    reader.onload = function (e) {
-      preloadFile.value = e.target.result
-    }
-    reader.readAsDataURL(file)
-  }
-}
-
-const addAvatar = async () => {
-  const fileName = Math.floor(Math.random() * 9000000000 + 1000000000)
-  console.log(fileName)
-  let filePath
-  if (avatar.value) {
-    const { data, error } = await supabase.storage
-      .from('images')
-      .upload('public/' + fileName, avatar.value)
-    if (error) {
-      console.error(error)
-    }
-    if (data) {
-      filePath = data.path
-
-      await supabase
-        .from('users')
-        .update({
-          avatar_url: filePath
-        })
-        .match({ id: animeStore.user.id })
-
-      await animeStore.getUser()
-    }
-  } else {
-    // заглушка, если пользователь не выбрал изображение
-    console.log('no avatar')
-  }
-}
-
 const deleteAvatar = async () => {
-  /*  await supabase.storage.from('users').remove({avatar_url: animeStore.user.avatar_url}) */
   await supabase.from('users').update({ avatar_url: null }).match({ id: animeStore.user.id })
-  await animeStore.getUser()
 }
 
 const updateUser = async () => {
-    const { data, error } = await supabase.auth.updateUser({
-        email: email.value,
-        password: password.value,
-    })
-    if (data) {
-        console.log('пароль изменен')
-    }
-    if (error) {
-        console.error(error)
-    }
+  const { data, error } = await supabase.auth.updateUser({
+    email: email.value,
+    password: password.value
+  })
+  if (data) {
+    console.log('пароль изменен')
+  }
+  if (error) {
+    console.error(error)
+  }
 }
 </script>
 <template>
@@ -112,17 +68,14 @@ const updateUser = async () => {
         />
       </div>
     </main>
-    <button @click="animeStore.recoverPassword(email)" class="p-[10px] border-red-500 border-[1px]">сбросить пароль</button>
-    <button @click="updateUser" class="p-[10px] border-green-500 border-[1px]">сменить пароль</button>
+    <button @click="animeStore.recoverPassword(email)" class="p-[10px] border-red-500 border-[1px]">
+      сбросить пароль
+    </button>
+    <button @click="updateUser" class="p-[10px] border-green-500 border-[1px]">
+      сменить пароль
+    </button>
 
     тут модалка для загрузки аватарки
-    <div class="modal-avatar">
-      <div class="add-avatar">
-        <input type="file" accept=".jpeg, .png, .jpg" @change="uploadAvatar" />
-        <img :src="preloadFile ? preloadFile : ''" alt="" />
-      </div>
-      <button @click="addAvatar" class="py-[10px] px-[20px] text-white bg-purple-600 rounded-[10px]">загрузить аву</button>
-    </div>
   </div>
 
   форма пока что регистрации и авторизации
@@ -138,6 +91,8 @@ const updateUser = async () => {
     <input type="email" v-model="email" class="border border-red-400" placeholder="имеил" />
     <input type="password" v-model="password" class="border border-red-400" placeholder="пароль" />
   </div>
+
+  <UploadAvatar />
 </template>
 
 <style scoped>

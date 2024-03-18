@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import { supabase } from '../supabase'
-import { User } from './types'
-import { ref } from 'vue'
+import type { User, Credentials } from './types'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 export const useAnimeStore = defineStore('animestore', () => {
   const user = ref<User>(null)
+  const modal = ref<boolean>(true)
   const login = async (email: string, password: string): Promise<void> => {
     if (!email && !password) return
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -25,11 +26,7 @@ export const useAnimeStore = defineStore('animestore', () => {
     } as User
   }
 
-  const registerUser = async (credentials: {
-    name: string
-    email: string
-    password: string
-  }): Promise<void> => {
+  const registerUser = async (credentials: Credentials): Promise<void> => {
     const { name, email, password } = credentials
 
     const { data: userExistsWithUsername } = await supabase
@@ -81,6 +78,21 @@ export const useAnimeStore = defineStore('animestore', () => {
     if (error) return console.error(error)
   }
 
+
+
+    supabase
+      .channel('users')
+      .on('postgres_changes', {event: '*', schema: 'public', table: 'users'}, (payload: any) => {
+        user.value = {
+          id: payload.new.id,
+          name: payload.new.name,
+          email: payload.new.email,
+          avatar_url: payload.new.avatar_url
+        } as User
+      })
+      .subscribe()
+
+
   const logout = async (): Promise<void> => {
     await supabase.auth.signOut()
     user.value = null
@@ -92,8 +104,6 @@ export const useAnimeStore = defineStore('animestore', () => {
     if (error) return console.error(error)
   }
 
- 
 
-
-  return { login, registerUser, user, getUser, logout, recoverPassword }
+  return { login, registerUser, user, getUser, logout, recoverPassword, modal }
 })
