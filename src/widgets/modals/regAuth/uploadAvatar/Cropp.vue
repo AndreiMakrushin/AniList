@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
-import Button from '../shared/ui/Button.vue'
+import Button from '../../../../shared/ui/Button.vue'
 
 const cropperRef = ref(null)
 

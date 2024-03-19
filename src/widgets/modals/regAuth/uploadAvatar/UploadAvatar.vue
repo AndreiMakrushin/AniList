@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useAnimeStore } from '../stores/animeStore'
-import { supabase } from '../supabase'
+import { useAnimeStore } from '@/stores/animeStore'
+import { supabase } from '@/supabase'
 import { ref, watch } from 'vue'
 import Cropp from './Cropp.vue'
-import DangerText from '../shared/ui/DangerText.vue'
-import UploadInput from '../shared/ui/UploadInput.vue'
+import DangerText from '@/shared/ui/DangerText.vue'
+import UploadInput from '@/shared/ui/UploadInput.vue'
 
 const animeStore = useAnimeStore()
 
@@ -56,3 +56,4 @@ watch(avatar, () => {
     </div>
   </Teleport>
 </template>
+../../../../stores/animeStore../../../../supabase

@@ -5,7 +5,7 @@ import { ref, watch } from 'vue'
 
 export const useAnimeStore = defineStore('animestore', () => {
   const user = ref<User>(null)
-  const modal = ref<boolean>(false)
+  const modal = ref<boolean>(true)
   const authRegModal = ref<boolean>(true)
 
   watch(user, () => {
@@ -68,7 +68,6 @@ export const useAnimeStore = defineStore('animestore', () => {
   const getUser = async (): Promise<void> => {
     
     const unauthorized = await supabase.auth.getSession()
-    console.log(unauthorized);
     if (unauthorized.data.session === null) return
 
     const { data, error } = await supabase.auth.getUser()

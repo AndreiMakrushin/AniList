@@ -2,8 +2,8 @@
 import { onMounted, ref, watch } from 'vue'
 import { useAnimeStore } from '../stores/animeStore'
 import { supabase } from '../supabase'
-import UploadAvatar from '@/widgets/UploadAvatar.vue'
-import RegistrationAndAutorisationModal from '../widgets/modals/RegistrationAndAutorisationModal.vue'
+import UploadAvatar from '@/widgets/modals/regAuth/uploadAvatar/UploadAvatar.vue'
+import RegistrationAndAutorisationModal from '../widgets/modals/regAuth/RegistrationAndAutorisationModal.vue'
 
 const animeStore = useAnimeStore()
 

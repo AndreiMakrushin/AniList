@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
-import Input from '../../shared/ui/Input.vue'
-import type { Credentials } from '../../stores/types'
-import { useAnimeStore } from '../../stores/animeStore'
-import Button from '../../shared/ui/Button.vue'
+import Input from '../../../shared/ui/Input.vue'
+import type { Credentials } from '../../../stores/types'
+import { useAnimeStore } from '../../../stores/animeStore'
+import Button from '../../../shared/ui/Button.vue'
 
 const animeStore = useAnimeStore()
 const switching = ref<boolean>(true)
