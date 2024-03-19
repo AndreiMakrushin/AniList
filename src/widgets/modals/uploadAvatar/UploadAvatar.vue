@@ -56,4 +56,3 @@ watch(avatar, () => {
     </div>
   </Teleport>
 </template>
-../../../../stores/animeStore../../../../supabase

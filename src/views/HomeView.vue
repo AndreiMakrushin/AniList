@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from 'vue'
 import { useAnimeStore } from '../stores/animeStore'
 import { supabase } from '../supabase'
-import UploadAvatar from '@/widgets/modals/regAuth/uploadAvatar/UploadAvatar.vue'
+import UploadAvatar from '@/widgets/modals/uploadAvatar/UploadAvatar.vue'
 import RegistrationAndAutorisationModal from '../widgets/modals/regAuth/RegistrationAndAutorisationModal.vue'
 
 const animeStore = useAnimeStore()
@@ -24,10 +24,10 @@ const password = ref(null)
   animeStore.registerUser(register)
 } */
 
-const deleteAvatar = async () => {
+/* const deleteAvatar = async () => {
   await supabase.from('users').update({ avatar_url: null }).match({ id: animeStore.user.id })
 }
-
+ */
 const updateUser = async () => {
   const { data, error } = await supabase.auth.updateUser({
     email: email.value,
@@ -43,7 +43,7 @@ const updateUser = async () => {
 </script>
 <template>
   <div>
-    <main v-if="!animeStore.user">
+    <!-- <main v-if="!animeStore.user">
       <button @click="login" class="flex border border-gray-700 text-[20px] px-[10px]">
         войти
       </button>
@@ -64,7 +64,7 @@ const updateUser = async () => {
           alt=""
         />
       </div>
-    </main>
+    </main> -->
     <button @click="animeStore.recoverPassword(email)" class="p-[10px] border-red-500 border-[1px]">
       сбросить пароль
     </button>

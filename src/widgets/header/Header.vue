@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { useAnimeStore } from '../../stores/animeStore'
+import { useAnimeStore } from '@/stores/animeStore'
 import userImage from '@/assets/img/user.png'
+import PopupButtonAvatar from '@/widgets/modals/popupButtonAvatar/PopupButtonAvatar.vue';
 
 const animeStore = useAnimeStore()
+
+const buttonAvatarModal = ref<boolean>(false)
 </script>
 
 <template>
@@ -23,7 +27,8 @@ const animeStore = useAnimeStore()
       <main class="flex flex-row items-center gap-5" v-if="animeStore.user">
         <span class="text-[14px] cursor-pointer">{{ animeStore.user?.name }}</span>
         <img
-          class="rounded-[50%] object-cover overflow-hidden w-[32px] h-[32px]"
+          @click="buttonAvatarModal = !buttonAvatarModal"
+          class="rounded-[50%] cursor-pointer object-cover overflow-hidden w-[32px] h-[32px]"
           :src="
             animeStore.user?.avatar_url
               ? `https://ivpfaitqeojbyulslqde.supabase.co/storage/v1/object/public/images/${animeStore.user.avatar_url}`
@@ -51,6 +56,8 @@ const animeStore = useAnimeStore()
         <span>text</span>
       </div>
     </div>
+
+    <PopupButtonAvatar v-if="buttonAvatarModal" @click="buttonAvatarModal = false"/>
   </header>
 </template>
 

@@ -5,7 +5,7 @@ import { ref, watch } from 'vue'
 
 export const useAnimeStore = defineStore('animestore', () => {
   const user = ref<User>(null)
-  const modal = ref<boolean>(true)
+  const modal = ref<boolean>(false)
   const authRegModal = ref<boolean>(true)
 
   watch(user, () => {

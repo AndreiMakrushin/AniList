@@ -13,7 +13,7 @@ onMounted(() => {
 
 <template>
   <Header />
-  <div class="mt-[75px]"></div>
+  <div class="mt-[50px]"></div>
 
   <RouterView />
 </template>
