@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Span from '@/shared/ui/Span.vue'
 import { useAnimeStore } from '@/stores/animeStore'
 import { supabase } from '@/supabase'
 import SvgButton from '@/widgets/modals/popupButtonAvatar/SvgButton.vue'

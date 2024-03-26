@@ -26,7 +26,6 @@ const buttonAvatarModal = ref<boolean>(false)
         <RouterLink to="/about" active-class="active">About</RouterLink>
       </nav>
       <main class="flex flex-row items-center gap-5" v-if="animeStore.user">
-        <span class="text-[14px] cursor-pointer">{{ animeStore.user?.name }}</span>
         <img
           @click="buttonAvatarModal = !buttonAvatarModal"
           class="rounded-[50%] cursor-pointer object-cover overflow-hidden w-[32px] h-[32px]"
@@ -39,8 +38,7 @@ const buttonAvatarModal = ref<boolean>(false)
         />
       </main>
     </div>
-    <ModalMenu />
-
+    <ModalMenu :userName="animeStore.user?.name"/>
     <PopupButtonAvatar v-if="buttonAvatarModal" @click="buttonAvatarModal = false"/>
   </header>
 </template>
