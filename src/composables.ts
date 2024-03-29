@@ -1,0 +1,1 @@
+export const API_list = 'https://api.anilibria.tv/v3/title/updates?page='

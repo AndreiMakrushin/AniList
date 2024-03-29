@@ -1,8 +1,10 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { useAnimeStore } from '../stores/animeStore'
 import { supabase } from '../supabase'
 import UploadAvatar from '@/widgets/modals/uploadAvatar/UploadAvatar.vue'
+import axios from 'axios'
+import { API_list } from '../composables'
 
 const animeStore = useAnimeStore()
 
@@ -39,38 +41,27 @@ const updateUser = async () => {
     console.error(error)
   }
 }
+const anime = ref([]);
+
+const animeList = async () => {
+  const response = await axios.get(`${API_list}1&limit=20`);
+  return response.data;
+};
+
+onMounted(async () => {
+  const data = await animeList();
+  anime.value = data.list;
+});
 </script>
 <template>
   <div>
-    Anime
-    <!-- <main v-if="!animeStore.user">
-      <button @click="login" class="flex border border-gray-700 text-[20px] px-[10px]">
-        войти
-      </button>
-      <button @click="registration">зарегать</button>
-      home
-    </main>
-    <main v-else>
-      <button @click="animeStore.logout"><strong>выйти с аккуунта</strong></button>
-      <div class="avatar">
-        <img
-          class="rounded-[50%] object-cover overflow-hidden w-[100px] h-[100px]"
-          @click="deleteAvatar"
-          :src="
-            animeStore.user.avatar_url
-              ? `https://ivpfaitqeojbyulslqde.supabase.co/storage/v1/object/public/images/${animeStore.user.avatar_url}`
-              : 'https://stroitel-btsk.ru/assets/cache_image/price/imeges/66493_1200x1200_0c1.jpeg'
-          "
-          alt=""
-        />
+    <div v-for="i in anime" :key="i">
+      <div class="border-[1px] border-black">
+        {{ i.names.ru }}
+        <img :src="`https://vk.anilib.top${i.posters.original.url}`" alt="">
       </div>
-    </main> -->
-   <!--  <button @click="animeStore.recoverPassword(email)" class="p-[10px] border-red-500 border-[1px]">
-      сбросить пароль
-    </button>
-    <button @click="updateUser" class="p-[10px] border-green-500 border-[1px]">
-      сменить пароль
-    </button> -->
+    </div>
+   
   </div>
 
   <UploadAvatar />
