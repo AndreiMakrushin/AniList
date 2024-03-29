@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AboutView from '../views/AboutView.vue'
 import NoFound from '../views/NoFound.vue'
+import ProfileView from '@/views/ProfileView.vue'
 
 const router = createRouter({
     history: createWebHistory(
@@ -20,6 +21,11 @@ const router = createRouter({
             path: '/:pathMatch(.*)*',
             name: 'NoFound',
             component: NoFound
+        },
+        {
+            path: '/profile',
+            name: 'profile',
+            component: ProfileView
         }
 
     ]

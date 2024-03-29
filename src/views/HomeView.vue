@@ -3,7 +3,6 @@ import { onMounted, ref, watch } from 'vue'
 import { useAnimeStore } from '../stores/animeStore'
 import { supabase } from '../supabase'
 import UploadAvatar from '@/widgets/modals/uploadAvatar/UploadAvatar.vue'
-import RegistrationAndAutorisationModal from '../widgets/modals/regAuth/RegistrationAndAutorisationModal.vue'
 
 const animeStore = useAnimeStore()
 
@@ -43,6 +42,7 @@ const updateUser = async () => {
 </script>
 <template>
   <div>
+    Anime
     <!-- <main v-if="!animeStore.user">
       <button @click="login" class="flex border border-gray-700 text-[20px] px-[10px]">
         войти
@@ -65,16 +65,15 @@ const updateUser = async () => {
         />
       </div>
     </main> -->
-    <button @click="animeStore.recoverPassword(email)" class="p-[10px] border-red-500 border-[1px]">
+   <!--  <button @click="animeStore.recoverPassword(email)" class="p-[10px] border-red-500 border-[1px]">
       сбросить пароль
     </button>
     <button @click="updateUser" class="p-[10px] border-green-500 border-[1px]">
       сменить пароль
-    </button>
+    </button> -->
   </div>
 
   <UploadAvatar />
-  <RegistrationAndAutorisationModal />
 </template>
 
 <style scoped>
