@@ -10,6 +10,9 @@ module.exports = {
             },
             transitionDuration: {
                 'short': '0.3s'
+            },
+            backgroundColor: {
+                'cardOpacity': 'rgba(0, 0, 0, 0.5)'
             }
 
         },

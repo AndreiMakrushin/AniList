@@ -11,11 +11,13 @@ const sprite = getHUDAsset('sprite.svg')
 
 defineProps<{
   name: string
+  width?: number
+  height?: number
 }>()
 </script>
 
 <template>
-  <SvgSprite :icon="name" :width="20" :height="20" :sprite="sprite" />
+  <SvgSprite :icon="name" :width="width? width : 20" :height="height? height : 20" :sprite="sprite" />
 </template>
 
 <style scoped lang="sass"></style>

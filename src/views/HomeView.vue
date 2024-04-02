@@ -1,10 +1,12 @@
-<script setup>
-import { onMounted, reactive, ref, watch } from 'vue'
+<script setup lang="ts">
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useAnimeStore } from '../stores/animeStore'
 import { supabase } from '../supabase'
 import UploadAvatar from '@/widgets/modals/uploadAvatar/UploadAvatar.vue'
 import axios from 'axios'
 import { API_list } from '../composables'
+import type { Anime } from '../stores/types'
+import IconSprite from '../shared/IconSprite.vue'
 
 const animeStore = useAnimeStore()
 
@@ -29,7 +31,8 @@ const password = ref(null)
   await supabase.from('users').update({ avatar_url: null }).match({ id: animeStore.user.id })
 }
  */
-const updateUser = async () => {
+
+/* const updateUser = async () => {
   const { data, error } = await supabase.auth.updateUser({
     email: email.value,
     password: password.value
@@ -40,35 +43,50 @@ const updateUser = async () => {
   if (error) {
     console.error(error)
   }
-}
-const anime = ref([]);
+} */
+
+const anime = ref<Anime[] | null>(null)
 
 const animeList = async () => {
-  const response = await axios.get(`${API_list}1&limit=20`);
-  return response.data;
-};
+  const response = await axios.get(`${API_list}1&limit=21`)
+  return response.data
+}
 
 onMounted(async () => {
-  const data = await animeList();
-  anime.value = data.list;
-});
+  if(anime.value) return
+  const data = await animeList()
+  anime.value = data.list
+  console.log(anime.value[0])
+})
+const hovered = ref<Anime[] | null>(null)
 </script>
 <template>
-  <div>
+  <div class="grid gap-[30px] p-[20px] 2xl:grid-cols-6 xl:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1">
     <div v-for="i in anime" :key="i">
-      <div class="border-[1px] border-black">
-        {{ i.names.ru }}
-        <img :src="`https://vk.anilib.top${i.posters.original.url}`" alt="">
-      </div>
+      <article
+        @mouseover="hovered = i"
+        @mouseleave="hovered = null"
+        class="flex flex-col items-center gap-3 cursor-pointer"
+      >
+       <div class="relative z-0 rounded-[15px] overflow-hidden"> 
+        <img
+          :src="`https://dl-20240330-7.anilib.moe${i.posters.original.url}`"
+          class="w-full h-auto"
+        />
+        <div class="flex absolute z-10 top-0 left-0 w-full h-full duration-300 items-center justify-center text-transparent" :class="{ 'bg-cardOpacity text-white': hovered === i }">
+          <IconSprite :width="150" :height="150" name="icon-play" />
+        </div>
+       </div>
+        <div class="flex flex-col items-center">
+          <h2 class="font-medium duration-300" :class="{ 'text-red-500': hovered === i }">{{ i.names.ru }}</h2>
+          <p class="font-medium text-gray-500">{{ i.season.year }}</p>
+        </div>
+      </article>
     </div>
-   
   </div>
 
   <UploadAvatar />
 </template>
-
 <style scoped>
-img {
-  width: 100px;
-}
+
 </style>

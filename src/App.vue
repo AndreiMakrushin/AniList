@@ -15,7 +15,6 @@ onMounted(() => {
 <template>
   <div class="flex flex-col justify-center">
     <Header />
-    <div class="mt-[50px]"></div>
     <RegistrationAndAutorisationModal />
     <RouterView />
   </div>

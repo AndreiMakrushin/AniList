@@ -18,8 +18,8 @@ const deleteAvatar = async () => {
 </script>
 
 <template>
-  <header class="fixed top-0 w-[100%] bg-slate-400">
-    <div class="justify-between items-center px-4 py-2 flex">
+  <header class="flex w-[100%] bg-slate-400">
+    <div class="justify-between items-center flex px-4 py-2 w-full">
       <div class="flex flex-row gap-5 w-[50%]">
         <span class="text-[20px] font-medium" @click="router.push('/')">AniList</span>
         <input
