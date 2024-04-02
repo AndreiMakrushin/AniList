@@ -6,16 +6,12 @@ import { ref, watch } from 'vue'
 export const useAnimeStore = defineStore('animestore', () => {
   const user = ref<User>(null)
   const modal = ref<boolean>(false)
-  const authRegModal = ref<boolean>(true)
+  const authRegModal = ref<boolean>(false)
 
-  watch(user, () => {
-    if (user.value) {
-      authRegModal.value = false
-    }
-    else{
-      authRegModal.value = true
-    }
-  })
+ watch(user, () => {
+   if (user.value) authRegModal.value = false
+ })
+
   const login = async (email: string, password: string): Promise<void> => {
     if (!email && !password) return
     const { data, error } = await supabase.auth.signInWithPassword({

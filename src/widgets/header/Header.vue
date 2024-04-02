@@ -38,6 +38,7 @@ const deleteAvatar = async () => {
           @click="modalMenu = !modalMenu"
         />
       </main>
+      <button v-if="!animeStore.user" @click="animeStore.authRegModal = true">Войти</button>
     </div>
     <ModalMenu v-if="modalMenu" @click="modalMenu = false">
       <SvgButton>
