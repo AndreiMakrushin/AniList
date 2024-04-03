@@ -5,7 +5,7 @@ const getFilePath = (filePath: string, base?: string) =>
   new URL(filePath, base ?? import.meta.url).href
 
 const getHUDAsset = (assetName: string): string =>
-  getFilePath(`../assets/img/${assetName}`, import.meta.url)
+  getFilePath(`../../src/assets/img/${assetName}`, import.meta.url)
 
 const sprite = getHUDAsset('sprite.svg')
 
