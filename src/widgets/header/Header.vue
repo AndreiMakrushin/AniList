@@ -30,7 +30,7 @@ const deleteAvatar = async () => {
           >AniList</span
         >
         <Search type="text" :class="'focus:ring-cyan-300 bg-[#d8d8d8]'" />
-        <Button text="Поиск" :style="'p-0 font-medium text-gray-500 hover:shadow-shadowDrop hover:ring-[1px] hover:ring-cyan-300 px-3 rounded-[15px]'" />
+        <Button text="Поиск" :style="'py-0 font-medium text-gray-500 hover:shadow-shadowDrop hover:ring-[1px] hover:ring-cyan-300 px-3 rounded-[15px]'" />
       </div>
       <!-- <nav class="flex flex-row gap-3 text-[14px]">
         <RouterLink to="/about" active-class="active">About</RouterLink>
