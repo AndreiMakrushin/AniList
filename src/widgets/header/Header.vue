@@ -7,6 +7,9 @@ import ModalMenu from '@/widgets/modals/popupButtonAvatar/ModalMenu.vue'
 import SvgButton from '@/widgets/modals/popupButtonAvatar/SvgButton.vue'
 import IconSprite from '@/shared/IconSprite.vue'
 import Avatar from '@/shared/ui/Avatar.vue'
+import Search from '@/shared/ui/Search.vue'
+import Switch from './Switch.vue'
+import Button from '@/shared/ui/Button.vue'
 
 const router = useRouter()
 const animeStore = useAnimeStore()
@@ -18,27 +21,30 @@ const deleteAvatar = async () => {
 </script>
 
 <template>
-  <header class="flex w-[100%] bg-slate-400">
+  <header class="flex w-[100%]">
     <div class="justify-between items-center flex px-4 py-2 w-full">
       <div class="flex flex-row gap-5 w-[50%]">
-        <span class="text-[20px] font-medium" @click="router.push('/')">AniList</span>
-        <input
-          type="text"
-          class="flex grow font-normal text-[15px] pl-[10px] rounded-[5px] outline-none focus:ring-[1px] focus:ring-red-500"
-        />
+        <span
+          class="text-[20px] font-medium cursor-pointer hover:text-red-500 duration-short"
+          @click="router.push('/')"
+          >AniList</span
+        >
+        <Search type="text" :class="'focus:ring-cyan-300 bg-[#d8d8d8]'" />
+        <Button text="Поиск" :style="'p-0 font-medium text-gray-500 hover:shadow-shadowDrop hover:ring-[1px] hover:ring-cyan-300 px-3 rounded-[15px]'" />
       </div>
-      <nav class="flex flex-row gap-3 text-[14px]">
-        <RouterLink to="/" active-class="active">Home</RouterLink>
+      <!-- <nav class="flex flex-row gap-3 text-[14px]">
         <RouterLink to="/about" active-class="active">About</RouterLink>
-      </nav>
-      <main class="flex flex-row items-center gap-5" v-if="animeStore.user">
+      </nav> -->
+      <main class="flex flex-row items-center gap-5">
+        <Switch />
         <Avatar
+          v-if="animeStore.user"
           :style="'w-[32px] h-[32px]'"
           :img="animeStore.user.avatar_url"
           @click="modalMenu = !modalMenu"
         />
+        <Button v-if="!animeStore.user" @click="animeStore.authRegModal = true" text="Войти" :style="'p-0 font-medium text-gray-500'"/>
       </main>
-      <button v-if="!animeStore.user" @click="animeStore.authRegModal = true">Войти</button>
     </div>
     <ModalMenu v-if="modalMenu" @click="modalMenu = false">
       <SvgButton>

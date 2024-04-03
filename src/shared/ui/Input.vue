@@ -10,7 +10,7 @@ defineProps<{
     :value="modelValue"
     :type="type"
     :class="style"
-    class="border border-[#d1d1d1] rounded-[17px] p-[10px] w-full text-black "
+    class="flex grow font-normal text-[16px] p-[10px] rounded-[15px] outline-none focus:ring-[1px]  bg-[#f5f5f5]"
     @input="$emit('update:modelValue', ($event.currentTarget as HTMLInputElement).value.trim())"
   />
 </template>

@@ -13,9 +13,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col justify-center">
-    <Header />
-    <RegistrationAndAutorisationModal />
-    <RouterView />
+  <div class="flex flex-col justify-center max-w-[1340px] mx-auto">
+      <Header />
+      <RegistrationAndAutorisationModal />
+      <RouterView />
   </div>
 </template>
