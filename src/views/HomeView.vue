@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useAnimeStore } from '../stores/animeStore'
-import { supabase } from '../supabase'
-import UploadAvatar from '@/widgets/modals/uploadAvatar/UploadAvatar.vue'
 import axios from 'axios'
 import { API_list } from '../composables'
 import type { Anime } from '../stores/types'
@@ -93,7 +91,5 @@ const hovered = ref<Anime[] | null>(null)
       </article>
     </div>
   </div>
-
-  <UploadAvatar />
 </template>
 

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useAnimeStore } from '@/stores/animeStore'
-import { supabase } from '@/supabase'
 import ModalMenu from '@/widgets/modals/popupButtonAvatar/ModalMenu.vue'
 import SvgButton from '@/widgets/modals/popupButtonAvatar/SvgButton.vue'
 import IconSprite from '@/shared/IconSprite.vue'
@@ -15,22 +14,38 @@ const router = useRouter()
 const animeStore = useAnimeStore()
 
 const modalMenu = ref<boolean>(false)
-const deleteAvatar = async () => {
-  await supabase.from('users').update({ avatar_url: null }).match({ id: animeStore.user.id })
+
+const mobie = ref<boolean>(false)
+
+const mobileScreen = () => {
+  window.innerWidth < 550 ? (mobie.value = true) : (mobie.value = false)
 }
+
+onresize = () => {
+  mobileScreen()
+}
+onMounted(() => {
+  mobileScreen()
+})
 </script>
 
 <template>
   <header class="flex w-[100%]">
     <div class="justify-between items-center flex px-4 py-2 w-full">
-      <div class="flex flex-row gap-5 w-[50%]">
+      <div class="flex flex-row gap-4 w-[60%]">
+        <span class="items-center flex" v-if="mobie">&#x2630;</span>
         <span
           class="text-[20px] font-medium cursor-pointer hover:text-red-500 duration-short"
           @click="router.push('/')"
           >AniList</span
         >
-        <Search type="text" :class="'focus:ring-cyan-300 bg-[#d8d8d8]'" />
-        <Button text="Поиск" :style="'py-0 font-medium text-gray-500 hover:shadow-shadowDrop hover:ring-[1px] hover:ring-cyan-300 px-3 rounded-[15px]'" />
+        <div v-if="!mobie" class="flex flex-row grow gap-5">
+          <Search type="text" :class="'focus:ring-cyan-300 bg-[#d8d8d8]'" />
+          <Button
+            text="Поиск"
+            :style="'py-0 font-medium text-gray-500 hover:shadow-shadowDrop hover:ring-[1px] hover:ring-cyan-300 px-3 rounded-[15px]'"
+          />
+        </div>
       </div>
       <main class="flex flex-row items-center gap-5">
         <Switch />
@@ -40,7 +55,12 @@ const deleteAvatar = async () => {
           :img="animeStore.user.avatar_url"
           @click="modalMenu = !modalMenu"
         />
-        <Button v-if="!animeStore.user" @click="animeStore.authRegModal = true" text="Войти" :style="'p-0 font-medium text-gray-500'"/>
+        <Button
+          v-if="!animeStore.user"
+          @click="animeStore.authRegModal = true"
+          text="Войти"
+          :style="'p-0 font-medium text-gray-500'"
+        />
       </main>
     </div>
     <ModalMenu v-if="modalMenu" @click="modalMenu = false">
@@ -57,21 +77,5 @@ const deleteAvatar = async () => {
         <span class="text-[14px] cursor-pointer" @click="animeStore.logout">Выйти</span>
       </SvgButton>
     </ModalMenu>
-    <!-- <ModalMenu v-if="buttonAvatarModal" @click="buttonAvatarModal = false">
-      <SvgButton @click="animeStore.modal = true">
-        <IconSprite name="icon-load" />
-        <Button :text="'Загрузить Фотографию'" :style="'font-normal'" />
-      </SvgButton>
-      <SvgButton @click="deleteAvatar">
-        <IconSprite name="icon-delete" />
-        <Button :text="'Удалить фотографию'" :style="'font-normal'" />
-      </SvgButton>
-    </ModalMenu> -->
   </header>
 </template>
-
-<style scoped>
-.active {
-  color: red;
-}
-</style>

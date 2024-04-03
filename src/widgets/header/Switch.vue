@@ -1,6 +1,6 @@
 <template>
     <div>
-      <label class="relative inline-block w-[60px] h-[34px]">
+      <label class="relative inline-block w-[45px] h-[25px]">
         <input type="checkbox" class="opacity-0 w-0 h-0" />
         <span class="switch round" @click="$emit('mode', $event.target)"></span>
       </label>
@@ -23,8 +23,8 @@
   .switch:before {
     position: absolute;
     content: '';
-    height: 26px;
-    width: 26px;
+    height: 17px;
+    width: 17px;
     left: 4px;
     bottom: 4px;
     background-image: url('@/assets/img/sun.png');
@@ -37,12 +37,12 @@
   }
   
   input:checked + .switch:before {
-    transform: translateX(26px);
+    transform: translateX(17px);
     background-image: url('@/assets/img/moon.png');
   }
   
   .switch.round {
-    border-radius: 34px;
+    border-radius: 15px;
   }
   
   .switch.round:before {
