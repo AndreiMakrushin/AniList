@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import SvgSprite from './SvgSprite.vue'
 
-const getFilePath = (filePath: string, base?: string) =>
-  new URL(filePath, base ?? import.meta.url).href
-
-const getHUDAsset = (assetName: string): string =>
-  getFilePath(`../../src/assets/img/${assetName}`, import.meta.url)
-
-const sprite = getHUDAsset('sprite.svg')
+const sprite = '/src/assets/img/sprite.svg'
 
 defineProps<{
   name: string
