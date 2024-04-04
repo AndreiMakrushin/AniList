@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAnimeStore } from '@/stores/animeStore'
-import { supabase } from '@/supabas'
+import { supabase } from '@/supabase'
 import { computed, ref, watch } from 'vue'
 import Cropp from './Cropp.vue'
 import DangerText from '@/shared/ui/DangerText.vue'

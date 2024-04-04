@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia'
-import { supabase } from '@/supabas'
-import type { User, Credentials } from './types'
+import { supabase } from '@/supabase'
+import type { User, Credentials, Anime } from './types'
 import { ref, watch } from 'vue'
 
 export const useAnimeStore = defineStore('animestore', () => {
   const user = ref<User>(null)
   const modal = ref<boolean>(false)
   const authRegModal = ref<boolean>(false)
+  const aniList = ref<Anime[] | null>(null)
 
  watch(user, () => {
    if (user.value) authRegModal.value = false
@@ -111,5 +112,5 @@ export const useAnimeStore = defineStore('animestore', () => {
   }
 
 
-  return { login, registerUser, user, getUser, logout, recoverPassword, modal, authRegModal }
+  return { login, registerUser, user, getUser, logout, recoverPassword, modal, authRegModal, aniList }
 })

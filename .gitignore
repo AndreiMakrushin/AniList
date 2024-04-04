@@ -17,7 +17,7 @@ coverage
 /cypress/videos/
 /cypress/screenshots/
 .env
-supabas.js
+supabase.js
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

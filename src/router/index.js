@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import AboutView from '../views/AboutView.vue'
+import AnimePage from '@/views/AnimePage.vue'
 import NoFound from '../views/NoFound.vue'
 import ProfileView from '@/views/ProfileView.vue'
 
@@ -13,9 +13,9 @@ const router = createRouter({
             component: HomeView
         },
         {
-            path: '/about',
-            name: 'about',
-            component: AboutView
+            path: '/anime/:id',
+            name: 'anime',
+            component: AnimePage
         },
         {
             path: '/:pathMatch(.*)*',
