@@ -6,24 +6,7 @@ import { API_list } from '../composables'
 import type { Anime } from '../stores/types'
 import IconSprite from '../shared/IconSprite.vue'
 
-const animeStore = useAnimeStore()
 
-const name = ref(null)
-const email = ref(null)
-const password = ref(null)
-
-/* const login = () => {
-  animeStore.login(email.value, password.value)
-} */
-
-/* const registration = () => {
-  const register = {
-    name: name.value,
-    email: email.value,
-    password: password.value
-  }
-  animeStore.registerUser(register)
-} */
 
 /* const deleteAvatar = async () => {
   await supabase.from('users').update({ avatar_url: null }).match({ id: animeStore.user.id })
