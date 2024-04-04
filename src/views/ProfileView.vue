@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAnimeStore } from '@/stores/animeStore'
 import Profile from '@/widgets/profile/Profile.vue'
-import { supabase } from '@/supabase'
+import { supabase } from '@/supabas'
 const animeStore = useAnimeStore()
 
 const deleteAvatar = async () => {

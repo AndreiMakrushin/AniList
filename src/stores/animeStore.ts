@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { supabase } from '@/supabase'
+import { supabase } from '@/supabas'
 import type { User, Credentials } from './types'
 import { ref, watch } from 'vue'
 
