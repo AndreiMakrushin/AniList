@@ -30,7 +30,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <header class="flex w-[100%]">
+  <header class="flex w-[100%] relative">
     <div class="justify-between items-center flex px-4 py-2 w-full">
       <div class="flex flex-row gap-4 w-[60%]">
         <span class="items-center flex" v-if="mobie">&#x2630;</span>
@@ -63,18 +63,18 @@ onMounted(() => {
         />
       </main>
     </div>
-    <ModalMenu v-if="modalMenu" @click="modalMenu = false">
+    <ModalMenu v-if="modalMenu" @click="modalMenu = false" :style="'right-[20px] top-[100%]'">
       <SvgButton>
         <IconSprite name="icon-user" />
-        <span class="text-[14px] cursor-pointer">{{ animeStore.user?.name }}</span>
+        <span class="text-[14px]">{{ animeStore.user?.name }}</span>
       </SvgButton>
-      <SvgButton>
+      <SvgButton class="cursor-pointer">
         <IconSprite name="icon-settings" />
-        <span class="text-[14px] cursor-pointer" @click="router.push('/profile')">Мой Профиль</span>
+        <span class="text-[14px]" @click="router.push('/profile')">Мой Профиль</span>
       </SvgButton>
-      <SvgButton>
+      <SvgButton class="cursor-pointer">
         <IconSprite name="exit" />
-        <span class="text-[14px] cursor-pointer" @click="animeStore.logout">Выйти</span>
+        <span class="text-[14px]" @click="animeStore.logout">Выйти</span>
       </SvgButton>
     </ModalMenu>
   </header>

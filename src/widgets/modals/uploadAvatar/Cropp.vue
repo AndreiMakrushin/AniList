@@ -24,18 +24,18 @@ const emit = defineEmits(['croppedImageBlob'])
 </script>
 
 <template>
-  <div>
+  <div class="flex items-center flex-col">
     <cropper
       ref="cropperRef"
-      class="flex w-[400px] h-[400px]"
+      class="flex w-[300px] h-[300px] sm:w-[400px] sm:h-[400px]"
       :src="props.src"
       :auto-zoom="true"
       :stencil-size="{
-        width: 280,
-        height: 280
+        width: 250,
+        height: 250
       }"
       image-restriction="stencil"
     />
-    <Button @click="change" :text="'Загрузить аватар'" />
+    <Button @click="change" :text="'Загрузить аватар'" :style="'m-1 p-2 font-medium text-gray-500 rounded-[10px] hover:shadow-shadowDrop hover:ring-[1px] hover:ring-cyan-300'"/>
   </div>
 </template>

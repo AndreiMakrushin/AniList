@@ -1,11 +1,12 @@
 <script setup lang="ts">
 defineProps<{
   userName?: string | undefined
+  style?: string
 }>()
 </script>
 
 <template>
-  <div class="absolute right-0 z-40 top-[50px] shadow-shadowDrop rounded-b-[10px] p-3 bg-slate-50">
+  <div :class="style" class="absolute z-10 shadow-shadowDrop rounded-b-[10px] p-3 bg-slate-50">
     <div class="flex flex-col justify-center items-center gap-3">
       <slot></slot>
     </div>
