@@ -1,9 +1,7 @@
-import { defineStore } from 'pinia'/* 
-import { supabase } from '@/supabase' */
+import { defineStore } from 'pinia'
+import { supabase } from '@/supabase'
 import type { User, Credentials } from './types'
 import { ref, watch } from 'vue'
-
-const supabase = ref()
 
 export const useAnimeStore = defineStore('animestore', () => {
   const user = ref<User>(null)
