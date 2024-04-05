@@ -35,9 +35,9 @@ const handleScroll = async () => {
 }
 
 onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true })
   if (props.anime) return
   loadAnime()
-  window.addEventListener('scroll', handleScroll, { passive: true })
 })
 
 onBeforeUnmount(() => {

@@ -14,4 +14,3 @@ defineProps<{
   <SvgSprite :icon="name" :width="width? width : 20" :height="height? height : 20" :sprite="sprite" />
 </template>
 
-<style scoped lang="sass"></style>

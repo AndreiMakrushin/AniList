@@ -16,6 +16,7 @@
         "cropperjs": "^1.6.1",
         "dotenv": "^16.3.1",
         "pinia": "^2.1.7",
+        "video.js": "^8.10.0",
         "vue": "^3.3.4",
         "vue-advanced-cropper": "^2.8.8",
         "vue-cropper": "^0.6.4",
