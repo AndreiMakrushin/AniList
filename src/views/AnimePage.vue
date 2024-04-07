@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import { API_anime } from '@/composables'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import type { Anime } from '@/stores/types'
+import { VideoPlayer } from 'vue-hls-video-player'
 
 const route = useRoute()
 const anime = ref<Anime | null>(null)
@@ -20,14 +21,26 @@ const dataAnime = (data) => {
   const day = ('0' + date.getDate()).slice(-2)
   return `${day}.${mounth}.${year}`
 }
-const episodeAnime = ref(1)
+const episodeAnime = ref<number>(1)
+const quality = ref<string>('fhd')
+const seria = computed(() => {
+  return 'https://cache.libria.fun' + anime.value?.player?.list[episodeAnime.value]?.hls[quality.value]
+})
+
+watch(episodeAnime, () => {
+  console.log(episodeAnime.value)
+})
+
+const updateEpisode = (event) => {
+  episodeAnime.value = parseInt(event.target.value)
+}
 </script>
 
 <template>
   <div class="w-[100%] flex flex-row gap-5">
     <div class="max-w-[300px] rounded-[10px] overflow-hidden">
       <img
-        :src="anime ? `https://dl-20240330-7.anilib.moe${anime?.posters.original.url}` : ''"
+        :src="anime ? `https://dl-20211030-963.anilib.top${anime?.posters.original.url}` : ''"
         alt=""
       />
     </div>
@@ -61,16 +74,17 @@ const episodeAnime = ref(1)
       </div>
       <p>Описание: {{ anime?.description }}</p>
 
-      <div>
-        {{ anime?.player.list[episodeAnime] }}
-        <video controls>
-          <source
-            :src="anime ? `https://dl-20240330-7.anilib.moe${anime?.player.list[episodeAnime].hls.sd}?clientIp=91.240.140.101&isWithAds=1&countryIso=UA&isAuthorized=0` : ''"
-            type="application/x-mpegURL"
-          />
-        </video>
+      <div class="mb-[600px]">
+        <select @change="updateEpisode">
+          <option v-for="i in anime?.player.list" :key="i">{{ i.episode }}</option>
+        </select>
+        <VideoPlayer
+          type="default"
+          :isControls="true"
+          :previewImageLink="'https://dl-20211030-963.anilib.top' + anime?.player?.list[episodeAnime]?.preview"
+          :link="anime ? seria : ''"
+        />
       </div>
     </div>
   </div>
 </template>
-
