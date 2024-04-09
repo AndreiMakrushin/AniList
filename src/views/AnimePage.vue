@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router'
 import axios from 'axios'
 import type { Anime } from '@/stores/types'
 import { VideoPlayer } from 'vue-hls-video-player'
+import Player from '@/widgets/player/Player.vue'
 
 const route = useRoute()
 const anime = ref<Anime | null>(null)
@@ -21,30 +22,21 @@ const dataAnime = (data) => {
   const day = ('0' + date.getDate()).slice(-2)
   return `${day}.${mounth}.${year}`
 }
-const episodeAnime = ref<number>(1)
-const quality = ref<string>('fhd')
-const seria = computed(() => {
-  return 'https://cache.libria.fun' + anime.value?.player?.list[episodeAnime.value]?.hls[quality.value]
-})
 
-watch(episodeAnime, () => {
-  console.log(episodeAnime.value)
-})
 
-const updateEpisode = (event) => {
-  episodeAnime.value = parseInt(event.target.value)
-}
+
 </script>
 
 <template>
-  <div class="w-[100%] flex flex-row gap-5">
+  <div class="w-[100%] flex flex-row gap-0 md:gap-5">
     <div class="max-w-[300px] rounded-[10px] overflow-hidden">
       <img
+      class="hidden md:block"
         :src="anime ? `https://dl-20211030-963.anilib.top${anime?.posters.original.url}` : ''"
         alt=""
       />
     </div>
-    <div class="w-[100%] flex flex-col gap-5">
+    <div class="w-[100%] flex flex-col gap-5 p-[10px] mb-2">
       <div>
         <h1 class="text-[30px]">{{ anime?.names.ru }}</h1>
         <p>{{ anime?.names.en }}</p>
@@ -59,11 +51,11 @@ const updateEpisode = (event) => {
         <p class="w-[5px] h-[5px] rounded-full bg-gray-500"></p>
         <span>{{ anime?.type.string }}</span>
       </div>
-      <ol class="flex flex-row gap-5">
+      <ol class="flex flex-row gap-5 flex-wrap">
         <li>Жанры:</li>
         <li v-for="i in anime?.genres" :key="i">{{ i }}</li>
       </ol>
-      <ol class="flex flex-row gap-5">
+      <ol class="flex flex-row gap-5 flex-wrap">
         <li>Озвучка:</li>
         <li v-for="i in anime?.team.voice" :key="i">{{ i }}</li>
       </ol>
@@ -74,15 +66,9 @@ const updateEpisode = (event) => {
       </div>
       <p>Описание: {{ anime?.description }}</p>
 
-      <div class="mb-[600px]">
-        <select @change="updateEpisode">
-          <option v-for="i in anime?.player.list" :key="i">{{ i.episode }}</option>
-        </select>
-        <VideoPlayer
-          type="default"
-          :isControls="true"
-          :previewImageLink="'https://dl-20211030-963.anilib.top' + anime?.player?.list[episodeAnime]?.preview"
-          :link="anime ? seria : ''"
+      <div>
+        <Player
+          :AnimePlay="anime?.player"
         />
       </div>
     </div>
