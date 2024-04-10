@@ -96,18 +96,22 @@ const prevEpisode = () => {
   if (episodeAnime.value === 0) return
   episodeAnime.value--
 }
-const seekVideo = (e: MouseEvent) => {
-  const target = e.target as HTMLElement
+const seekVideo = (e: MouseEvent | TouchEvent) => {
+  if (!videoElement.value) return
 
-  if (!videoElement.value || !target) return
+  const progressWidth = (e.target as HTMLElement).offsetWidth
+  let clickX = 0
 
-  const progressWidth = target.offsetWidth
-  const clickX = e.offsetX
-  const newTime = (clickX / progressWidth) * (videoElement.value?.duration || 0)
-
-  if (videoElement.value) {
-    videoElement.value.currentTime = newTime
+  if (e instanceof MouseEvent) {
+    clickX = (e as MouseEvent).offsetX
+  } else if (e instanceof TouchEvent) {
+    clickX =
+      (e as TouchEvent).changedTouches[0].clientX -
+      (e.target as HTMLElement).getBoundingClientRect().left
   }
+
+  const newTime = (clickX / progressWidth) * (videoElement.value?.duration || 0)
+  videoElement.value.currentTime = newTime
 }
 const fullScreen = () => {
   if (!videoElement.value) return
@@ -118,7 +122,7 @@ const fullScreen = () => {
 </script>
 
 <template>
-  <div class="max-w-[700px] relative flex flex-col" id="player">
+  <div class="max-w-[700px] relative flex flex-col bg-slate-800 rounded-[10px]" id="player">
     <Preview :previewAnime="previewAnime" v-if="!isPreview" @click="playVideo" />
 
     <video
