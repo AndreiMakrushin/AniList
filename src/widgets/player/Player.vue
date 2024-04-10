@@ -8,7 +8,7 @@ const props = defineProps<{
   AnimePlay?: Object
 }>()
 
-const episodeAnime = ref<number>(1)
+const episodeAnime = ref<number>(0)
 const quality = ref<string>('fhd')
 const timer = ref<number>(0)
 
@@ -83,17 +83,18 @@ const timeUpdate = () => {
   timer.value = videoElement.value?.currentTime
 }
 const nextEpisode = () => {
+  if (episodeAnime.value === props.AnimePlay?.list.length - 1) return
   episodeAnime.value++
 }
 const prevEpisode = () => {
-  if (episodeAnime.value === 1) return
+  if (episodeAnime.value === 0) return
   episodeAnime.value--
 }
-const seekVideo = (e) =>{
-  const progressWidth = e.target.offsetWidth;
-  const clickX = e.offsetX;
-  const newTime = (clickX / progressWidth) * videoElement.value?.duration;
-  videoElement.value.currentTime = newTime;
+const seekVideo = (e) => {
+  const progressWidth = e.target.offsetWidth
+  const clickX = e.offsetX
+  const newTime = (clickX / progressWidth) * videoElement.value?.duration
+  videoElement.value.currentTime = newTime
 }
 const fullScreen = () => {
   if (!videoElement.value) return
@@ -125,41 +126,76 @@ const fullScreen = () => {
       :selected="episodeAnime"
       @update="updateEpisode($event)"
     />
-    <div class="absolute bottom-0 w-full flex flex-col text-white p-2 gap-1" v-if="isPreview">
-      <div
-      @click="seekVideo($event)"
-        class="w-full h-[5px] hover:h-[8px] duration-short bg-slate-500 rounded-[5px] cursor-pointer"
-      >
-        <div :style="progress" class="bg-red-500 h-full rounded-[5px]"></div>
+    <div class="absolute bottom-0 w-full flex flex-col text-white px-2 py-1 gap-1" v-if="isPreview">
+      <div class="relative h-[5px] hover:h-[8px] duration-short">
+        <div
+          class="absolute z-30 h-full  duration-short bg-slate-500 rounded-[5px] cursor-pointer"
+          :style="progress"
+        ></div>
+
+        <input
+          type="range"
+          class="w-full absolute z-10 h-full"
+          @click="seekVideo"
+          min="0"
+          max="100"
+          :value="(timer / videoElement?.duration) * 100"
+        />
       </div>
+
       <div class="flex flex-row items-center justify-between">
         <div class="flex flex-row gap-2 items-center">
           <IconSprite class="cursor-pointer" name="icon-prev" @click.stop="prevEpisode" />
-        <IconSprite
-          class="cursor-pointer"
-          name="icon-pause"
-          @click.stop="videoPaused"
-          v-if="playing"
-        />
-        <IconSprite
-          class="cursor-pointer"
-          name="icon-play-small"
-          @click.stop="playVideo"
-          v-if="!playing"
-        />
-        <IconSprite class="cursor-pointer" name="icon-next" @click.stop="nextEpisode" />
+          <IconSprite
+            class="cursor-pointer"
+            name="icon-pause"
+            @click.stop="videoPaused"
+            v-if="playing"
+          />
+          <IconSprite
+            class="cursor-pointer"
+            name="icon-play-small"
+            @click.stop="playVideo"
+            v-if="!playing"
+          />
+          <IconSprite class="cursor-pointer" name="icon-next" @click.stop="nextEpisode" />
 
-        <p>
-          {{ videoTime }}
-          / {{ videoDuration }}
-        </p>
+          <p>
+            {{ videoTime }}
+            / {{ videoDuration }}
+          </p>
         </div>
         <div class="flex flex-row gap-3">
-          <IconSprite name="icon-settings" class="hover:rotate-[60deg] duration-short cursor-pointer"/>
-          <IconSprite name="icon-fullScreen" class="hover:scale-110 duration-short cursor-pointer" @click="fullScreen()"/>
-
+          <IconSprite
+            name="icon-settings"
+            class="hover:rotate-[60deg] duration-short cursor-pointer"
+          />
+          <IconSprite
+            name="icon-fullScreen"
+            class="hover:scale-110 duration-short cursor-pointer"
+            @click="fullScreen()"
+          />
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+input[type='range'] {
+  -webkit-appearance: none;
+  cursor: pointer;
+  outline: none;
+  border-radius: 5px;
+  transition: 0.5s;
+  background: #525151;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 100%;
+  width: 0px;
+  transition:
+    height 0.5s,
+    width 0.5s;
+}
+</style>
