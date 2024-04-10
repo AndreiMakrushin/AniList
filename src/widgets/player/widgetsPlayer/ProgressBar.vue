@@ -1,20 +1,20 @@
 <script setup lang="ts">
 defineProps<{
-  value?: number
-  style?: object
+  value?: number | undefined
+  style?: object | undefined
 }>()
 </script>
 
 <template>
-  <div class="relative h-[5px] hover:h-[8px] duration-short">
+  <div class="relative h-[5px] hover:h-[8px] duration-short bg-[#525151] rounded-[5px]">
     <div
-      class="absolute z-30 h-full duration-short bg-slate-500 rounded-[5px] cursor-pointer"
+      class="absolute z-10 h-full duration-short bg-slate-500 rounded-[5px] cursor-pointer"
       :style="style"
     ></div>
 
     <input
       type="range"
-      class="w-full absolute z-10 h-full"
+      class="w-full absolute z-20 h-full"
       @click="$emit('update', $event)"
       min="0"
       max="100"
@@ -30,7 +30,7 @@ input[type='range'] {
   outline: none;
   border-radius: 5px;
   transition: 0.5s;
-  background: #525151;
+  background: none;
 }
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;

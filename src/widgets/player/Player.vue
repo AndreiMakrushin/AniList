@@ -12,7 +12,7 @@ const props = defineProps<{
 
 const episodeAnime = ref<number>(1)
 const quality = ref<string>('fhd')
-const timer = ref<number>(0)
+const timer = ref<number | null | undefined>(0)
 
 const seria = computed(() => {
   return 'https://cache.libria.fun' + props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]
@@ -49,12 +49,14 @@ const updateEpisode = (event: string) => {
   episodeAnime.value = parseInt(event)
 }
 const playVideo = () => {
+  if (!videoElement.value) return
   isPreview.value = true
   playing.value = true
   videoElement.value.play()
 }
 
 const videoPaused = () => {
+  if (!videoElement.value) return
   playing.value = false
   videoElement.value.pause()
 }
@@ -68,6 +70,7 @@ const videoTime = computed(() => {
 })
 
 const videoDuration = computed(() => {
+  if (!videoElement.value) return
   const time = Math.floor(videoElement.value?.duration)
   const minutes = Math.floor(time / 60)
   const seconds = Math.floor(time % 60)
@@ -76,6 +79,7 @@ const videoDuration = computed(() => {
 })
 
 const progress = computed(() => {
+  if (!videoElement.value) return
   return {
     width: `${(timer.value / videoElement.value?.duration) * 100}%`
   }
