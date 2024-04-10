@@ -3,12 +3,14 @@ import { onMounted, defineProps, ref, watch, computed, watchEffect } from 'vue'
 import Hls from 'hls.js'
 import SelectEpisode from './widgetsPlayer/SelectEpisode.vue'
 import IconSprite from '@/shared/IconSprite.vue'
+import Preview from './widgetsPlayer/Preview.vue'
+import ProgressBar from './widgetsPlayer/ProgressBar.vue'
 
 const props = defineProps<{
   AnimePlay?: Object
 }>()
 
-const episodeAnime = ref<number>(0)
+const episodeAnime = ref<number>(1)
 const quality = ref<string>('fhd')
 const timer = ref<number>(0)
 
@@ -43,7 +45,7 @@ watch(episodeAnime, () => {
   isPreview.value = false
 })
 
-const updateEpisode = (event) => {
+const updateEpisode = (event: string) => {
   episodeAnime.value = parseInt(event)
 }
 const playVideo = () => {
@@ -90,35 +92,38 @@ const prevEpisode = () => {
   if (episodeAnime.value === 0) return
   episodeAnime.value--
 }
-const seekVideo = (e) => {
-  const progressWidth = e.target.offsetWidth
+const seekVideo = (e: MouseEvent) => {
+  const target = e.target as HTMLElement
+
+  if (!videoElement.value || !target) return
+
+  const progressWidth = target.offsetWidth
   const clickX = e.offsetX
-  const newTime = (clickX / progressWidth) * videoElement.value?.duration
-  videoElement.value.currentTime = newTime
+  const newTime = (clickX / progressWidth) * (videoElement.value?.duration || 0)
+
+  if (videoElement.value) {
+    videoElement.value.currentTime = newTime
+  }
 }
 const fullScreen = () => {
   if (!videoElement.value) return
-  videoElement.value.requestFullscreen()
+  const player = document.getElementById('player')
+  if (!player) return
+  player.requestFullscreen()
 }
 </script>
 
 <template>
-  <div class="max-w-[700px] relative flex flex-col">
-    <div class="absolute w-full" v-if="!isPreview" @click="playVideo">
-      <img :src="previewAnime" class="w-full rounded-[10px]" />
-      <IconSprite
-        name="icon-play"
-        :width="50"
-        :height="50"
-        class="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] text-white cursor-pointer"
-      />
-    </div>
+  <div class="max-w-[700px] relative flex flex-col" id="player">
+    <Preview :previewAnime="previewAnime" v-if="!isPreview" @click="playVideo" />
+
     <video
       v-show="isPreview"
       class="w-full h-full rounded-[10px]"
       ref="videoElement"
       @timeupdate="timeUpdate"
       @click="playing ? videoPaused() : playVideo()"
+      :controls="false"
     ></video>
     <SelectEpisode
       class="absolute top-2 right-2"
@@ -127,21 +132,11 @@ const fullScreen = () => {
       @update="updateEpisode($event)"
     />
     <div class="absolute bottom-0 w-full flex flex-col text-white px-2 py-1 gap-1" v-if="isPreview">
-      <div class="relative h-[5px] hover:h-[8px] duration-short">
-        <div
-          class="absolute z-30 h-full  duration-short bg-slate-500 rounded-[5px] cursor-pointer"
-          :style="progress"
-        ></div>
-
-        <input
-          type="range"
-          class="w-full absolute z-10 h-full"
-          @click="seekVideo"
-          min="0"
-          max="100"
-          :value="(timer / videoElement?.duration) * 100"
-        />
-      </div>
+      <ProgressBar
+        :style="progress"
+        :value="(timer / videoElement?.duration) * 100"
+        @update="seekVideo($event)"
+      />
 
       <div class="flex flex-row items-center justify-between">
         <div class="flex flex-row gap-2 items-center">
@@ -180,22 +175,3 @@ const fullScreen = () => {
     </div>
   </div>
 </template>
-
-<style scoped>
-input[type='range'] {
-  -webkit-appearance: none;
-  cursor: pointer;
-  outline: none;
-  border-radius: 5px;
-  transition: 0.5s;
-  background: #525151;
-}
-input[type='range']::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 100%;
-  width: 0px;
-  transition:
-    height 0.5s,
-    width 0.5s;
-}
-</style>
