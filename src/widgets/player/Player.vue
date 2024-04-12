@@ -93,7 +93,7 @@ const timeUpdate = () => {
   timer.value = videoElement.value?.currentTime
 }
 const nextEpisode = () => {
-  if (episodeAnime.value === props.AnimePlay?.list.length - 1) return
+  if (episodeAnime.value === Object.keys(props.AnimePlay?.list).length) {episodeAnime.value = 0}
   episodeAnime.value++
 }
 const prevEpisode = () => {
