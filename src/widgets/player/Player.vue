@@ -65,8 +65,6 @@ const videoPaused = () => {
 }
 
 const videoTime = computed(() => {
-  if (timer.value) return
-
   const time = Math.floor(timer.value)
   const minutes = Math.floor(time / 60)
   const seconds = Math.floor(time % 60)
