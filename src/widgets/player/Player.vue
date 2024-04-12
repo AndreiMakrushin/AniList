@@ -12,7 +12,7 @@ const props = defineProps<{
 }>()
 
 const episodeAnime = ref<number>(1)
-const quality = ref<string>('fhd')
+const quality = ref<string>('hd')
 const timer = ref<number | undefined>(0)
 const fullscreen = ref<boolean>(false)
 

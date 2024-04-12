@@ -2,12 +2,20 @@ import { defineStore } from 'pinia'
 import { supabase } from '@/supabase'
 import type { User, Credentials, Anime } from './types'
 import { ref, watch } from 'vue'
+import axios from 'axios'
+import { API_list } from '@/composables'
 
 export const useAnimeStore = defineStore('animestore', () => {
   const user = ref<User>(null)
   const modal = ref<boolean>(false)
   const authRegModal = ref<boolean>(false)
   const aniList = ref<Anime[] | null>(null)
+  const animeCount = ref(20)
+
+  const animeList = async () => {
+    const response = await axios.get(`${API_list}1&limit=${animeCount.value}`)
+    return response.data
+  }
 
  watch(user, () => {
    if (user.value) authRegModal.value = false
@@ -112,5 +120,5 @@ export const useAnimeStore = defineStore('animestore', () => {
   }
 
 
-  return { login, registerUser, user, getUser, logout, recoverPassword, modal, authRegModal, aniList }
+  return { login, registerUser, user, getUser, logout, recoverPassword, modal, authRegModal, aniList, animeCount, animeList }
 })

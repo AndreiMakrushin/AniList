@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import {API_search} from '@/composables'
+import axios from 'axios'
 import { RouterLink, useRouter } from 'vue-router'
 import { useAnimeStore } from '@/stores/animeStore'
 import ModalMenu from '@/widgets/modals/popupButtonAvatar/ModalMenu.vue'
@@ -7,16 +9,29 @@ import SvgButton from '@/widgets/modals/popupButtonAvatar/SvgButton.vue'
 import IconSprite from '@/shared/IconSprite.vue'
 import Avatar from '@/shared/ui/Avatar.vue'
 import Search from '@/shared/ui/Search.vue'
-import Switch from './Switch.vue'
+import Switch from '../../shared/ui/Switch.vue'
 import Button from '@/shared/ui/Button.vue'
+
 
 const router = useRouter()
 const animeStore = useAnimeStore()
 
 const modalMenu = ref<boolean>(false)
-
 const mobie = ref<boolean>(false)
+const searchAnime = ref<string>('')
 
+const animeSearch = async() =>{
+  const responce = await axios.get(`${API_search}${searchAnime.value}`)
+  return animeStore.aniList = responce.data.list
+}
+watch(searchAnime, async() => {
+  if (searchAnime.value !== '') {
+    animeSearch()
+  }else{
+    const data = await animeStore.animeList()
+    animeStore.aniList = data.list
+  }
+})
 const mobileScreen = () => {
   window.innerWidth < 550 ? (mobie.value = true) : (mobie.value = false)
 }
@@ -40,8 +55,9 @@ onMounted(() => {
           >AniList</span
         >
         <div v-if="!mobie" class="flex flex-row grow gap-5">
-          <Search type="text" :class="'focus:ring-cyan-300 bg-[#d8d8d8]'" />
+          <Search type="text" :class="'focus:ring-cyan-300 bg-[#d8d8d8]'" v-model="searchAnime" :modelValue="searchAnime"/>
           <Button
+            @click="animeSearch"
             text="Поиск"
             :style="'py-0 font-medium text-gray-500 hover:shadow-shadowDrop hover:ring-[1px] hover:ring-cyan-300 px-3 rounded-[15px]'"
           />

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useAnimeStore } from '../../stores/animeStore'
 import { onMounted, onBeforeUnmount, ref } from 'vue'
-import { API_list } from '@/composables'
 import type { Anime } from '@/stores/types'
 import IconSprite from '@/shared/IconSprite.vue'
 const router = useRouter()
@@ -10,17 +9,15 @@ const props = defineProps<{
   anime?: Anime
 }>()
 
-const animeCount = ref(20)
+const animeStore = useAnimeStore()
+
 const hovered = ref<Anime[] | null>(null)
 
-const animeList = async () => {
-  const response = await axios.get(`${API_list}1&limit=${animeCount.value}`)
-  return response.data
-}
+
 const emit = defineEmits(['loadAnime'])
 const loadAnime = async () => {
   try {
-    const data = await animeList()
+    const data = await animeStore.animeList()
     emit('loadAnime', data.list)
   } catch (error) {
     console.error('Ошибка при загрузке данных:', error)
@@ -29,7 +26,7 @@ const loadAnime = async () => {
 
 const handleScroll = async () => {
   if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
-    animeCount.value += 20
+    animeStore.animeCount += 20
     await loadAnime()
   }
 }
