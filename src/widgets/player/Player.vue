@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, defineProps, ref, watch, computed, watchEffect } from 'vue'
+import { onMounted, defineProps, ref, watch, computed } from 'vue'
 import Hls from 'hls.js'
 import SelectEpisode from './widgetsPlayer/SelectEpisode.vue'
 import IconSprite from '@/shared/IconSprite.vue'
 import Preview from './widgetsPlayer/Preview.vue'
 import ProgressBar from './widgetsPlayer/ProgressBar.vue'
+import type { Anime } from '@/stores/types'
 
 const props = defineProps<{
   AnimePlay?: Object
@@ -12,7 +13,7 @@ const props = defineProps<{
 
 const episodeAnime = ref<number>(1)
 const quality = ref<string>('fhd')
-const timer = ref<number | null | undefined>(0)
+const timer = ref<number | undefined>(0)
 
 const seria = computed(() => {
   return 'https://cache.libria.fun' + props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]
@@ -62,6 +63,8 @@ const videoPaused = () => {
 }
 
 const videoTime = computed(() => {
+  if (timer.value) return
+
   const time = Math.floor(timer.value)
   const minutes = Math.floor(time / 60)
   const seconds = Math.floor(time % 60)
@@ -80,6 +83,7 @@ const videoDuration = computed(() => {
 
 const progress = computed(() => {
   if (!videoElement.value) return
+  if (!timer.value) return
   return {
     width: `${(timer.value / videoElement.value?.duration) * 100}%`
   }

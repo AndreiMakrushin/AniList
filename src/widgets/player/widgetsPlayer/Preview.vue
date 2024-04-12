@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import IconSprite from '@/shared/IconSprite.vue'
+import {defineProps} from 'vue'
 
-defineProps<{
-    previewAnime?: string
-}>()
+interface PreviewProps {
+  previewAnime?: string
+}
+
+const props = defineProps<PreviewProps>()
 </script>
 
 <template>
  <div class="absolute w-full"  >
-      <img :src="previewAnime" class="w-full rounded-[10px]" />
+      <img :src="props.previewAnime" class="w-full rounded-[10px]" />
       <IconSprite
         name="icon-play"
         :width="50"
@@ -18,4 +21,3 @@ defineProps<{
     </div>
 </template>
 
-<style scoped></style>
