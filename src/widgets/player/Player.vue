@@ -14,6 +14,7 @@ const props = defineProps<{
 const episodeAnime = ref<number>(1)
 const quality = ref<string>('fhd')
 const timer = ref<number | undefined>(0)
+const fullscreen = ref<boolean>(false)
 
 const seria = computed(() => {
   return 'https://cache.libria.fun' + props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]
@@ -119,9 +120,19 @@ const seekVideo = (e: MouseEvent | TouchEvent) => {
 }
 const fullScreen = () => {
   if (!videoElement.value) return
-  const player = document.getElementById('player')
+  const player = document.getElementById('player') as HTMLVideoElement | null;
   if (!player) return
-  player.requestFullscreen()
+  player.requestFullscreen().then(() => {
+    fullscreen.value = true
+  }).catch((err) => {
+    console.log(err)
+  })
+}
+const normalScreen = () => {
+  if (!videoElement.value) return
+  if (!fullscreen.value) return
+  document.exitFullscreen()
+  fullscreen.value = false
 }
 </script>
 
@@ -178,9 +189,16 @@ const fullScreen = () => {
             class="hover:rotate-[60deg] duration-short cursor-pointer"
           />
           <IconSprite
+          v-if="!fullscreen"
             name="icon-fullScreen"
             class="hover:scale-110 duration-short cursor-pointer"
             @click="fullScreen()"
+          />
+          <IconSprite
+          v-else
+            name="icon-smallScreen"
+            class="hover:scale-20 duration-short cursor-pointer"
+            @click="normalScreen()"
           />
         </div>
       </div>
