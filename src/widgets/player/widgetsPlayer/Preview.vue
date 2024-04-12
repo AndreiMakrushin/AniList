@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import IconSprite from '@/shared/IconSprite.vue'
 import {defineProps} from 'vue'
-import noImg from '@/assets/img/noimg.jpeg'
 
 interface PreviewProps {
   previewAnime?: string
@@ -9,12 +8,11 @@ interface PreviewProps {
 
 const props = defineProps<PreviewProps>()
 
-console.log(props.previewAnime);
 </script>
 
 <template>
  <div class="absolute w-full"  >
-      <img :src="!'https://dl-20211030-963.anilib.topundefined' ? props.previewAnime : noImg" class="w-full rounded-[10px]" />
+      <img :src="previewAnime" class="w-full rounded-[10px]" />
       <IconSprite
         name="icon-play"
         :width="50"

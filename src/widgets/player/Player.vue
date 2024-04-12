@@ -6,9 +6,10 @@ import IconSprite from '@/shared/IconSprite.vue'
 import Preview from './widgetsPlayer/Preview.vue'
 import ProgressBar from './widgetsPlayer/ProgressBar.vue'
 import type { Anime } from '@/stores/types'
+import noImg from '@/assets/img/noimg.jpeg'
 
 const props = defineProps<{
-  AnimePlay?: Object
+  AnimePlay?: Anime
 }>()
 
 const episodeAnime = ref<number>(1)
@@ -21,7 +22,7 @@ const seria = computed(() => {
 })
 
 const previewAnime = computed(() => {
-  return 'https://dl-20211030-963.anilib.top' + props.AnimePlay?.list[episodeAnime.value]?.preview
+  return props.AnimePlay?.list[episodeAnime.value]?.preview ? 'https://dl-20211030-963.anilib.top' + props.AnimePlay?.list[episodeAnime.value]?.preview : noImg
 })
 
 const videoElement = ref<HTMLVideoElement | null>(null)
@@ -137,8 +138,8 @@ const normalScreen = () => {
 </script>
 
 <template>
-  <div class="max-w-[700px] relative flex flex-col bg-slate-800 rounded-[10px]" id="player">
-    <Preview :previewAnime="previewAnime" v-if="!isPreview" @click="playVideo" />
+  <div class="max-w-[700px] max-h-[400px] relative flex flex-col bg-slate-800 rounded-[10px]" id="player">
+    <Preview :previewAnime="previewAnime ? previewAnime : noImg" v-if="!isPreview" @click="playVideo" />
 
     <video
       v-show="isPreview"
