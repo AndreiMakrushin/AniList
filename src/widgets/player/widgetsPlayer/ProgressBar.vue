@@ -1,16 +1,15 @@
 <script setup lang="ts">
-defineProps<{
-  value?: number | undefined
-  style?: object | undefined
-}>()
-const emit = defineEmits(['update'])
-const handleTouchEnd = (event) => {
-  const el = event.target;
-  const inputRect  = el.getBoundingClientRect();
-  const touchX = Math.floor(event.changedTouches[0].clientX - inputRect.left);  
-    
-  emit('update', {event, touchX})
-    console.log("X координата касания:", touchX , 'длина', event.target.offsetWidth);
+import { defineProps, defineEmits } from 'vue';
+
+const props = defineProps<{
+  value?: number | undefined;
+  style?: object | undefined;
+}>();
+
+const emit = defineEmits(['update']);
+
+const emited = (event: Event) => {
+  emit('update', event);
 }
 </script>
 
@@ -18,16 +17,16 @@ const handleTouchEnd = (event) => {
   <div class="relative h-[5px] hover:h-[8px] duration-short bg-[#525151] rounded-[5px]">
     <div
       class="absolute z-10 h-full duration-short bg-slate-500 rounded-[5px] cursor-pointer"
-      :style="style"
+      :style="props.style"
     ></div>
     <input
       type="range"
       class="w-full absolute z-20 h-full"
-      @click="$emit('update', $event)"
-      @touchend="$emit('update', $event)"
+      @click="emited($event)"
+      @touchend="emited($event)"
       min="0"
       max="100"
-      :value="value"
+      :value="props.value"
     />
   </div>
 </template>
