@@ -16,17 +16,19 @@ const episodeAnime = ref<number>(1)
 const quality = ref<string>('hd')
 const timer = ref<number | undefined>(0)
 const fullscreen = ref<boolean>(false)
+const videoElement = ref<HTMLVideoElement | null>(null)
+const isPreview = ref<boolean>(false)
+const playing = ref<boolean>(false)
+const isQualityVideo = ref<boolean>(false)
 
 const seria = computed(() => {
   return 'https://cache.libria.fun' + props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]
 })
 const previewAnime = computed(() => {
-  return props.AnimePlay?.list[episodeAnime.value]?.preview ? 'https://dl-20211030-963.anilib.top' + props.AnimePlay?.list[episodeAnime.value]?.preview : noImg
+  return props.AnimePlay?.list[episodeAnime.value]?.preview
+    ? 'https://dl-20211030-963.anilib.top' + props.AnimePlay?.list[episodeAnime.value]?.preview
+    : noImg
 })
-
-const videoElement = ref<HTMLVideoElement | null>(null)
-const isPreview = ref<boolean>(false)
-const playing = ref<boolean>(false)
 
 onMounted(() => {
   watch([props, episodeAnime, quality], () => {
@@ -63,21 +65,30 @@ const videoPaused = () => {
   videoElement.value.pause()
 }
 
+const videoTimer = (time: number) =>{
+  const minutes = Math.floor((time % 3600) / 60)
+  const seconds = Math.floor((time % 3600) % 60)
+
+  if (time >= 3600) {
+    const hour = Math.floor(time / 3600)
+    return `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
+      .toString()
+      .padStart(2, '0')}`
+  } else {
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+  }
+} 
+
 const videoTime = computed(() => {
   const time = Math.floor(timer.value)
-  const minutes = Math.floor(time / 60)
-  const seconds = Math.floor(time % 60)
-
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+  return videoTimer(time)
 })
 
 const videoDuration = computed(() => {
   if (!videoElement.value) return
   const time = Math.floor(videoElement.value?.duration)
-  const minutes = Math.floor(time / 60)
-  const seconds = Math.floor(time % 60)
 
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+ return videoTimer(time)
 })
 
 const progress = computed(() => {
@@ -92,7 +103,9 @@ const timeUpdate = () => {
   timer.value = videoElement.value?.currentTime
 }
 const nextEpisode = () => {
-  if (episodeAnime.value === Object.keys(props.AnimePlay?.list).length) {episodeAnime.value = 0}
+  if (episodeAnime.value === Object.keys(props.AnimePlay?.list).length) {
+    episodeAnime.value = 0
+  }
   episodeAnime.value++
 }
 const prevEpisode = () => {
@@ -118,13 +131,16 @@ const seekVideo = (e: MouseEvent | TouchEvent) => {
 }
 const fullScreen = () => {
   if (!videoElement.value) return
-  const player = document.getElementById('player') as HTMLVideoElement | null;
+  const player = document.getElementById('player') as HTMLVideoElement | null
   if (!player) return
-  player.requestFullscreen().then(() => {
-    fullscreen.value = true
-  }).catch((err) => {
-    console.log(err)
-  })
+  player
+    .requestFullscreen()
+    .then(() => {
+      fullscreen.value = true
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 const normalScreen = () => {
   if (!videoElement.value) return
@@ -132,11 +148,25 @@ const normalScreen = () => {
   document.exitFullscreen()
   fullscreen.value = false
 }
+const openSelectQuality = () => {
+  isQualityVideo.value = !isQualityVideo.value
+}
+const updateQuality = (event: string) => {
+  quality.value = event
+  isQualityVideo.value = false
+}
 </script>
 
 <template>
-  <div class="max-w-[700px] max-h-[400px] relative flex flex-col bg-slate-800 rounded-[10px]" id="player">
-    <Preview :previewAnime="previewAnime ? previewAnime : noImg" v-if="!isPreview" @click="playVideo" />
+  <div
+    class="max-w-[700px] max-h-[400px] relative flex flex-col bg-slate-800 rounded-[10px]"
+    id="player"
+  >
+    <Preview
+      :previewAnime="previewAnime ? previewAnime : noImg"
+      v-if="!isPreview"
+      @click="playVideo"
+    />
 
     <video
       v-show="isPreview"
@@ -183,23 +213,41 @@ const normalScreen = () => {
         </div>
         <div class="flex flex-row gap-3">
           <IconSprite
+            @click.stop="openSelectQuality"
             name="icon-settings"
             class="hover:rotate-[60deg] duration-short cursor-pointer"
           />
           <IconSprite
-          v-if="!fullscreen"
+            v-if="!fullscreen"
             name="icon-fullScreen"
             class="hover:scale-110 duration-short cursor-pointer"
             @click="fullScreen()"
           />
           <IconSprite
-          v-else
+            v-else
             name="icon-smallScreen"
             class="hover:scale-20 duration-short cursor-pointer"
             @click="normalScreen()"
           />
         </div>
       </div>
+    </div>
+
+    <div
+      class="absolute text-white bottom-10 right-5 bg-gray-500 rounded-[10px] overflow-hidden"
+      v-if="isQualityVideo"
+    >
+      <ol>
+        <li
+          class="cursor-pointer px-2 py-1 hover:bg-gray-700 duration-short"
+          :class="{ 'bg-gray-700': quality === key, hidden: q === null }"
+          v-for="(q, key) in props.AnimePlay?.list[episodeAnime]?.hls"
+          :key="key"
+          @click="updateQuality(key)"
+        >
+          {{ String(key) === 'fhd' ? 1080 : String(key) === 'hd' ? 720 : 480 }}p
+        </li>
+      </ol>
     </div>
   </div>
 </template>

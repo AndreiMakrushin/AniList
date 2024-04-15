@@ -2,7 +2,7 @@
 import IconSprite from '@/shared/IconSprite.vue'
 import {defineProps} from 'vue'
 
-interface PreviewProps {
+type PreviewProps =  {
   previewAnime?: string
 }
 

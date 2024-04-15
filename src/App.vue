@@ -6,6 +6,7 @@ import Header from './widgets/header/Header.vue'
 import RegistrationAndAutorisationModal from './widgets/modals/regAuth/RegistrationAndAutorisationModal.vue'
 import UploadAvatar from './widgets/modals/uploadAvatar/UploadAvatar.vue'
 
+
 const animeStore = useAnimeStore()
 
 onMounted(() => {

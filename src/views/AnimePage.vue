@@ -22,16 +22,16 @@ const dataAnime = (data) => {
   const day = ('0' + date.getDate()).slice(-2)
   return `${day}.${mounth}.${year}`
 }
-
-
-
+const animeLength = computed(() => {
+  return anime.value ? Object.keys(anime.value?.player?.list).length : 0;
+})
 </script>
 
 <template>
   <div class="w-[100%] flex flex-row gap-0 md:gap-5">
     <div class="max-w-[300px] rounded-[10px] overflow-hidden">
       <img
-      class="hidden md:block"
+        class="hidden md:block"
         :src="anime ? `https://dl-20211030-963.anilib.top${anime?.posters.original.url}` : ''"
         alt=""
       />
@@ -60,17 +60,13 @@ const dataAnime = (data) => {
         <li v-for="i in anime?.team.voice" :key="i">{{ i }}</li>
       </ol>
       <div>
-        <span>Количество эпизодов: {{ anime?.player.episodes.first }}</span> из
-        <span>{{ anime?.player.episodes.last }}</span>
+        <span>Количество эпизодов: {{ animeLength }}</span> из
+        <span>{{ anime?.type?.episodes }}</span>
         <p>Последнее обновление: {{ dataAnime(anime?.updated) }}</p>
       </div>
       <p>Описание: {{ anime?.description }}</p>
 
-      <div>
-        <Player
-          :AnimePlay="anime?.player"
-        />
-      </div>
+      <Player :AnimePlay="anime?.player" />
     </div>
   </div>
 </template>
