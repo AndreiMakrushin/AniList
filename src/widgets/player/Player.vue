@@ -20,7 +20,6 @@ const fullscreen = ref<boolean>(false)
 const seria = computed(() => {
   return 'https://cache.libria.fun' + props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]
 })
-
 const previewAnime = computed(() => {
   return props.AnimePlay?.list[episodeAnime.value]?.preview ? 'https://dl-20211030-963.anilib.top' + props.AnimePlay?.list[episodeAnime.value]?.preview : noImg
 })

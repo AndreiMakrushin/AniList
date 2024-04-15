@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SvgSprite from './SvgSprite.vue'
 
-const sprite = '/src/assets/img/sprite.svg'
+const sprite = 'assets/img/sprite.svg'
 
 defineProps<{
   name: string
