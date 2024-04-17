@@ -2,15 +2,8 @@
 import AnimeList from '@/widgets/catalog/AnimeList.vue'
 import { useAnimeStore } from '@/stores/animeStore'
 
-
 const animeStore = useAnimeStore()
 
-
-
-/* const deleteAvatar = async () => {
-  await supabase.from('users').update({ avatar_url: null }).match({ id: animeStore.user.id })
-}
- */
 
 /* const updateUser = async () => {
   const { data, error } = await supabase.auth.updateUser({
@@ -24,15 +17,12 @@ const animeStore = useAnimeStore()
     console.error(error)
   }
 } */
-
-
-
-
-
 </script>
 <template>
   <div>
-    <AnimeList :anime="animeStore.aniList" @loadAnime="animeStore.aniList = $event"/>
+    <AnimeList
+      :anime="animeStore.searchedAnime.length ? animeStore.searchedAnime : animeStore.aniList"
+      @loadAnime="animeStore.aniList = [...animeStore.aniList, ...$event]"
+    />
   </div>
 </template>
-

@@ -4,7 +4,6 @@ import { API_anime } from '@/composables'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import type { Anime } from '@/stores/types'
-import { VideoPlayer } from 'vue-hls-video-player'
 import Player from '@/widgets/player/Player.vue'
 
 const route = useRoute()

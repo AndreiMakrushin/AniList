@@ -14,7 +14,7 @@ const animeStore = useAnimeStore()
 const hovered = ref<Anime[] | null>(null)
 
 
-const emit = defineEmits(['loadAnime'])
+const emit = defineEmits(['loadAnime', 'update'])
 const loadAnime = async () => {
   try {
     const data = await animeStore.animeList()
@@ -26,14 +26,14 @@ const loadAnime = async () => {
 
 const handleScroll = async () => {
   if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
-    animeStore.animeCount += 20
+    animeStore.animePage += 1
     await loadAnime()
   }
 }
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true })
-  if (props.anime) return
+  if (props.anime.length !== 0) return
   loadAnime()
 })
 

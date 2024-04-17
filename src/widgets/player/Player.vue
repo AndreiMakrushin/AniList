@@ -102,6 +102,12 @@ const progress = computed(() => {
 const timeUpdate = () => {
   timer.value = videoElement.value?.currentTime
 }
+
+/* watch(timer, () => {
+  if (timer.value === videoElement.value?.duration) {
+    episodeAnime.value++
+  }
+}) */
 const nextEpisode = () => {
   if (episodeAnime.value === Object.keys(props.AnimePlay?.list).length) {
     episodeAnime.value = 0
