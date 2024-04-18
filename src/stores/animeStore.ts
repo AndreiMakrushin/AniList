@@ -2,8 +2,6 @@ import { defineStore } from 'pinia'
 import { supabase } from '@/supabase'
 import type { User, Credentials, Anime } from './types'
 import { ref, watch } from 'vue'
-import axios from 'axios'
-import { API_list } from '@/composables'
 
 export const useAnimeStore = defineStore('animestore', () => {
   const user = ref<User>(null)
@@ -14,11 +12,11 @@ export const useAnimeStore = defineStore('animestore', () => {
   const animeCount = ref<number>(20)
   const animePage = ref<number>(1)
 
-  const animeList = async () => {
+/*   const animeList = async () => {
     const response = await axios.get(`${API_list}${animePage.value}&limit=${animeCount.value}`)
     return response.data
-  }
-
+  } */
+/* https://api.anilibria.tv/v3/title/updates?page=1&limit=24 */
  watch(user, () => {
    if (user.value) authRegModal.value = false
  })
@@ -122,5 +120,5 @@ export const useAnimeStore = defineStore('animestore', () => {
   }
 
 
-  return { login, registerUser, user, getUser, logout, recoverPassword, modal, authRegModal, aniList, animeCount, animeList, animePage, searchedAnime }
+  return { login, registerUser, user, getUser, logout, recoverPassword, modal, authRegModal, aniList, animeCount,  animePage, searchedAnime }
 })

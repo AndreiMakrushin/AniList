@@ -14,6 +14,7 @@ onMounted(async () => {
   return (anime.value = res.data)
 })
 
+
 const dataAnime = (data) => {
   const date = new Date(data * 1000)
   const year = date.getFullYear()
@@ -65,7 +66,7 @@ const animeLength = computed(() => {
       </div>
       <p>Описание: {{ anime?.description }}</p>
 
-      <Player :AnimePlay="anime?.player" />
+      <Player :AnimePlay="anime?.player" :animeName="anime?.names.ru" :animeId="anime?.id"/>
     </div>
   </div>
 </template>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { defineProps } from 'vue'
 import SvgSprite from './SvgSprite.vue'
 
 const sprite = '/src/assets/img/sprite.svg'

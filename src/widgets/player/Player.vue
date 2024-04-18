@@ -1,25 +1,33 @@
 <script setup lang="ts">
-import { onMounted, defineProps, ref, watch, computed } from 'vue'
+import { onMounted, defineProps, ref, watch, computed, reactive } from 'vue'
 import Hls from 'hls.js'
 import SelectEpisode from './widgetsPlayer/SelectEpisode.vue'
 import IconSprite from '@/shared/IconSprite.vue'
 import Preview from './widgetsPlayer/Preview.vue'
 import ProgressBar from './widgetsPlayer/ProgressBar.vue'
-import type { Anime } from '@/stores/types'
+import type { Anime, User } from '@/stores/types'
 import noImg from '@/assets/img/noimg.jpeg'
+import { supabase } from '@/supabase'
+import { useAnimeStore } from '@/stores/animeStore'
+
+const animeStore = useAnimeStore()
 
 const props = defineProps<{
   AnimePlay?: Anime
+  animeName?: string
+  animeId?: number
 }>()
 
 const episodeAnime = ref<number>(1)
 const quality = ref<string>('hd')
-const timer = ref<number | undefined>(0)
+const timer = ref<number>(0)
 const fullscreen = ref<boolean>(false)
 const videoElement = ref<HTMLVideoElement | null>(null)
 const isPreview = ref<boolean>(false)
 const playing = ref<boolean>(false)
 const isQualityVideo = ref<boolean>(false)
+
+const animeCashe = ref([])
 
 const seria = computed(() => {
   return 'https://cache.libria.fun' + props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]
@@ -53,19 +61,28 @@ const updateEpisode = (event: string) => {
   episodeAnime.value = parseInt(event)
 }
 const playVideo = () => {
+  if (isQualityVideo.value) {
+    isQualityVideo.value = false
+    return
+  }
   if (!videoElement.value) return
   isPreview.value = true
   playing.value = true
   videoElement.value.play()
+  addAnimeToHistory()
 }
 
 const videoPaused = () => {
+  if (isQualityVideo.value) {
+    isQualityVideo.value = false
+    return
+  }
   if (!videoElement.value) return
   playing.value = false
   videoElement.value.pause()
 }
 
-const videoTimer = (time: number) =>{
+const videoTimer = (time: number) => {
   const minutes = Math.floor((time % 3600) / 60)
   const seconds = Math.floor((time % 3600) % 60)
 
@@ -77,7 +94,7 @@ const videoTimer = (time: number) =>{
   } else {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
   }
-} 
+}
 
 const videoTime = computed(() => {
   const time = Math.floor(timer.value)
@@ -88,7 +105,7 @@ const videoDuration = computed(() => {
   if (!videoElement.value) return
   const time = Math.floor(videoElement.value?.duration)
 
- return videoTimer(time)
+  return videoTimer(time)
 })
 
 const progress = computed(() => {
@@ -98,16 +115,11 @@ const progress = computed(() => {
     width: `${(timer.value / videoElement.value?.duration) * 100}%`
   }
 })
-
-const timeUpdate = () => {
-  timer.value = videoElement.value?.currentTime
-}
-
-/* watch(timer, () => {
+watch(timer, () => {
   if (timer.value === videoElement.value?.duration) {
     episodeAnime.value++
   }
-}) */
+})
 const nextEpisode = () => {
   if (episodeAnime.value === Object.keys(props.AnimePlay?.list).length) {
     episodeAnime.value = 0
@@ -161,6 +173,68 @@ const updateQuality = (event: string) => {
   quality.value = event
   isQualityVideo.value = false
 }
+
+const addNewAnimeHistory = async () => {
+  try {
+    await supabase.from('animeUserList').insert({
+      animeId: props.animeId,
+      userId: animeStore.user.id,
+      current_Time: Math.floor(timer.value),
+      duration_Time: Math.floor(videoElement.value?.duration || 0),
+      nameAnime: props.animeName,
+      img:
+        'https://dl-20211030-963.anilib.top' + props.AnimePlay?.list[episodeAnime.value]?.preview,
+      episode: episodeAnime.value
+    })
+  } catch (insertError) {
+    console.log(insertError)
+  }
+}
+const updateAnimeHistory = async () => {
+  try {
+    await supabase
+      .from('animeUserList')
+      .update({
+        current_Time: timer.value
+      })
+      .match({
+        animeId: props.animeId,
+        episode: episodeAnime.value
+      })
+    return
+  } catch (updateError) {
+    console.log(updateError)
+  }
+}
+
+async function addAnimeToHistory() {
+  console.log('addAnimeToHistory');
+  try {
+    const { data: existsAnime, error: existsAnimeError } = await supabase
+      .from('animeUserList')
+      .select()
+      .filter('animeId', 'eq', props.animeId)
+      .filter('episode', 'eq', episodeAnime.value)
+      .single()
+    if (videoElement.value) {
+      videoElement.value.currentTime = existsAnime.current_Time
+    }
+    if (existsAnime) {
+      return
+    }
+  } catch (error) {
+    console.log(error)
+  }
+  addNewAnimeHistory()
+}
+
+const timeUpdate = () => {
+  timer.value = Math.floor(videoElement.value?.currentTime)
+}
+
+watch(timer, () => {
+  updateAnimeHistory()
+})
 </script>
 
 <template>
@@ -171,7 +245,7 @@ const updateQuality = (event: string) => {
     <Preview
       :previewAnime="previewAnime ? previewAnime : noImg"
       v-if="!isPreview"
-      @click="playVideo"
+      @click="playVideo()"
     />
 
     <video

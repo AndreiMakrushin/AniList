@@ -60,11 +60,11 @@ onMounted(() => {
             v-model="searchAnime"
             :modelValue="searchAnime"
           />
-          <Button
+          <!-- <Button
             @click="animeSearch"
             text="Поиск"
             :style="'py-0 font-medium text-gray-500 hover:shadow-shadowDrop hover:ring-[1px] hover:ring-cyan-300 px-3 rounded-[15px]'"
-          />
+          /> -->
         </div>
       </div>
       <main class="flex flex-row items-center gap-5">

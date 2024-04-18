@@ -1,10 +1,27 @@
 <script setup lang="ts">
 import AnimeList from '@/widgets/catalog/AnimeList.vue'
 import { useAnimeStore } from '@/stores/animeStore'
+import type { Anime } from '@/stores/types'
+import axios from 'axios'
+import { API_list } from '@/composables'
+import { watch } from 'vue'
 
 const animeStore = useAnimeStore()
 
-
+const addedAnime = (e: Anime[]) => {
+  return (animeStore.aniList = e.reduce((acc: Anime[], obj: Anime) => {
+    if (acc.find((item) => item.id === obj.id)) {
+      return acc
+    }
+    return [...acc, obj]
+  }, animeStore.aniList))
+}
+const getAnimeFromApi = async () => {
+  const response = await axios.get(
+    `${API_list}${animeStore.animePage}&limit=${animeStore.animeCount}`
+  )
+  return addedAnime(response.data.list)
+}
 /* const updateUser = async () => {
   const { data, error } = await supabase.auth.updateUser({
     email: email.value,
@@ -21,8 +38,10 @@ const animeStore = useAnimeStore()
 <template>
   <div>
     <AnimeList
+      :user="animeStore?.user?.id"
       :anime="animeStore.searchedAnime.length ? animeStore.searchedAnime : animeStore.aniList"
-      @loadAnime="animeStore.aniList = [...animeStore.aniList, ...$event]"
+      @getAnimeFromApi="getAnimeFromApi"
+      @page="animeStore.animePage++"
     />
   </div>
 </template>
