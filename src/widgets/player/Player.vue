@@ -217,7 +217,8 @@ const updateAnimeHistory = async () => {
       })
       .match({
         animeId: props.animeId,
-        episode: episodeAnime.value
+        episode: episodeAnime.value,
+        userId: animeStore.user.id
       })
     return
   } catch (updateError) {
@@ -233,7 +234,9 @@ async function addAnimeToHistory() {
       .select()
       .filter('animeId', 'eq', props.animeId)
       .filter('episode', 'eq', episodeAnime.value)
+      .filter('userId', 'eq', animeStore.user.id)
       .single()
+      console.log(existsAnime);
     if (videoElement.value && existsAnime) {
       videoElement.value.currentTime = existsAnime.current_Time
       return
