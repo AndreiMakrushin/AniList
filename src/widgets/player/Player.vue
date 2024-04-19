@@ -9,7 +9,7 @@ import type { Anime, User } from '@/stores/types'
 import noImg from '@/assets/img/noimg.jpeg'
 import { supabase } from '@/supabase'
 import { useAnimeStore } from '@/stores/animeStore'
-
+import Tesseract from 'tesseract.js'
 const animeStore = useAnimeStore()
 
 const props = defineProps<{
@@ -26,8 +26,6 @@ const videoElement = ref<HTMLVideoElement | null>(null)
 const isPreview = ref<boolean>(false)
 const playing = ref<boolean>(false)
 const isQualityVideo = ref<boolean>(false)
-
-const animeCashe = ref([])
 
 const seria = computed(() => {
   return 'https://cache.libria.fun' + props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]
@@ -52,6 +50,24 @@ onMounted(() => {
     }
   })
 })
+
+/* onMounted(() => {
+  const videoElement = document.getElementById('my-video') as HTMLVideoElement
+  if (videoElement) {
+    videoElement.addEventListener('play', async () => {
+      const audioTracks = videoElement.getAudioTracks();
+      console.log(audioTracks);
+      if (audioTracks && audioTracks.length > 0) {
+        const audioTrack = audioTracks[0]
+        if (audioTrack && audioTrack.enabled) {
+          const result = await Tesseract.recognize(audioTrack.track.getCueAsBlob(), { lang: 'eng' })
+          const text = result.data.text.trim()
+          console.log(text)
+        }
+      }
+    })
+  }
+}) */
 
 watch(episodeAnime, () => {
   isPreview.value = false
@@ -175,6 +191,7 @@ const updateQuality = (event: string) => {
 }
 
 const addNewAnimeHistory = async () => {
+  if (!animeStore.user) return
   try {
     await supabase.from('animeUserList').insert({
       animeId: props.animeId,
@@ -191,6 +208,7 @@ const addNewAnimeHistory = async () => {
   }
 }
 const updateAnimeHistory = async () => {
+  if (!animeStore.user) return
   try {
     await supabase
       .from('animeUserList')
@@ -208,7 +226,7 @@ const updateAnimeHistory = async () => {
 }
 
 async function addAnimeToHistory() {
-  console.log('addAnimeToHistory');
+  if (!animeStore.user) return
   try {
     const { data: existsAnime, error: existsAnimeError } = await supabase
       .from('animeUserList')
@@ -216,10 +234,8 @@ async function addAnimeToHistory() {
       .filter('animeId', 'eq', props.animeId)
       .filter('episode', 'eq', episodeAnime.value)
       .single()
-    if (videoElement.value) {
+    if (videoElement.value && existsAnime) {
       videoElement.value.currentTime = existsAnime.current_Time
-    }
-    if (existsAnime) {
       return
     }
   } catch (error) {
@@ -233,7 +249,10 @@ const timeUpdate = () => {
 }
 
 watch(timer, () => {
-  updateAnimeHistory()
+  if (!animeStore.user) return
+  if (timer.value >= 10) {
+    updateAnimeHistory()
+  }
 })
 </script>
 
@@ -249,6 +268,7 @@ watch(timer, () => {
     />
 
     <video
+      id="my-video"
       v-show="isPreview"
       class="w-full h-full rounded-[10px]"
       ref="videoElement"

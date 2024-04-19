@@ -28,7 +28,7 @@ const animeLength = computed(() => {
 </script>
 
 <template>
-  <div class="w-[100%] flex flex-row gap-0 md:gap-5">
+  <div class="w-[100%] flex flex-row gap-0 md:gap-5 p-3">
     <div class="max-w-[300px] rounded-[10px] overflow-hidden">
       <img
         class="hidden md:block"
