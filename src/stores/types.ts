@@ -5,6 +5,16 @@ export interface User {
     avatar_url: string
 }
 
+export interface addAnime {
+  animeId: number | undefined;
+  userId: number | undefined;
+  current_Time: number| undefined;
+  duration_Time: number| undefined;
+  nameAnime: string| undefined;
+  img: string | undefined;
+  episode: number | undefined;
+}
+
 export interface Credentials {
     name: string
     email: string

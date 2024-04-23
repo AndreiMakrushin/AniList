@@ -5,11 +5,12 @@ import SelectEpisode from './widgetsPlayer/SelectEpisode.vue'
 import IconSprite from '@/shared/IconSprite.vue'
 import Preview from './widgetsPlayer/Preview.vue'
 import ProgressBar from './widgetsPlayer/ProgressBar.vue'
-import type { Anime, User } from '@/stores/types'
+import type { Anime, User, addAnime } from '@/stores/types'
 import noImg from '@/assets/img/noimg.jpeg'
 import { supabase } from '@/supabase'
 import { useAnimeStore } from '@/stores/animeStore'
-import {updateAnimeHistory} from '../../features/updateAnime/updateAnime'
+import { updateAnimeHistory } from '../../features/updateAnime/updateAnime'
+import {addNewAnimeHistory} from '../../features/addAnime/addAnime'
 const animeStore = useAnimeStore()
 
 const props = defineProps<{
@@ -172,7 +173,7 @@ const updateQuality = (event: string) => {
   isQualityVideo.value = false
 }
 
-const addNewAnimeHistory = async () => {
+/* const addNewAnimeHistory = async () => {
   if (!animeStore.user) return
   try {
     await supabase.from('animeUserList').insert({
@@ -188,7 +189,7 @@ const addNewAnimeHistory = async () => {
   } catch (insertError) {
     console.log(insertError)
   }
-}
+} */
 /* const updateAnimeHistory = async () => {
   if (!animeStore.user) return
   try {
@@ -226,7 +227,16 @@ async function addAnimeToHistory() {
   } catch (error) {
     console.log(error)
   }
-  addNewAnimeHistory()
+  const anime = {
+    animeId: props.animeId,
+    userId: animeStore.user.id,
+    current_Time: timer.value,
+    duration_Time: Math.floor(videoElement.value?.duration || 0),
+    nameAnime: props.animeName,
+    img: props.AnimePlay?.list[episodeAnime.value]?.preview,
+    episode: episodeAnime.value
+  }
+  addNewAnimeHistory(anime)
 }
 
 const timeUpdate = () => {
@@ -236,10 +246,9 @@ const timeUpdate = () => {
 watch(timer, () => {
   if (!animeStore.user) return
   if (timer.value >= 10) {
-    updateAnimeHistory(animeStore.user.id, props.animeId, episodeAnime.value ,timer.value)
+    updateAnimeHistory(animeStore.user.id, props.animeId, episodeAnime.value, timer.value)
   }
 })
-
 </script>
 
 <template>
