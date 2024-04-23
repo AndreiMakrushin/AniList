@@ -9,7 +9,7 @@ import type { Anime, User } from '@/stores/types'
 import noImg from '@/assets/img/noimg.jpeg'
 import { supabase } from '@/supabase'
 import { useAnimeStore } from '@/stores/animeStore'
-import Tesseract from 'tesseract.js'
+import {updateAnimeHistory} from '../../features/updateAnime/updateAnime'
 const animeStore = useAnimeStore()
 
 const props = defineProps<{
@@ -50,24 +50,6 @@ onMounted(() => {
     }
   })
 })
-
-/* onMounted(() => {
-  const videoElement = document.getElementById('my-video') as HTMLVideoElement
-  if (videoElement) {
-    videoElement.addEventListener('play', async () => {
-      const audioTracks = videoElement.getAudioTracks();
-      console.log(audioTracks);
-      if (audioTracks && audioTracks.length > 0) {
-        const audioTrack = audioTracks[0]
-        if (audioTrack && audioTrack.enabled) {
-          const result = await Tesseract.recognize(audioTrack.track.getCueAsBlob(), { lang: 'eng' })
-          const text = result.data.text.trim()
-          console.log(text)
-        }
-      }
-    })
-  }
-}) */
 
 watch(episodeAnime, () => {
   isPreview.value = false
@@ -207,7 +189,7 @@ const addNewAnimeHistory = async () => {
     console.log(insertError)
   }
 }
-const updateAnimeHistory = async () => {
+/* const updateAnimeHistory = async () => {
   if (!animeStore.user) return
   try {
     await supabase
@@ -224,7 +206,7 @@ const updateAnimeHistory = async () => {
   } catch (updateError) {
     console.log(updateError)
   }
-}
+} */
 
 async function addAnimeToHistory() {
   if (!animeStore.user) return
@@ -236,7 +218,7 @@ async function addAnimeToHistory() {
       .filter('episode', 'eq', episodeAnime.value)
       .filter('userId', 'eq', animeStore.user.id)
       .single()
-      console.log(existsAnime);
+    console.log(existsAnime)
     if (videoElement.value && existsAnime) {
       videoElement.value.currentTime = existsAnime.current_Time
       return
@@ -254,9 +236,10 @@ const timeUpdate = () => {
 watch(timer, () => {
   if (!animeStore.user) return
   if (timer.value >= 10) {
-    updateAnimeHistory()
+    updateAnimeHistory(animeStore.user.id, props.animeId, episodeAnime.value ,timer.value)
   }
 })
+
 </script>
 
 <template>
@@ -285,7 +268,10 @@ watch(timer, () => {
       :selected="episodeAnime"
       @update="updateEpisode($event)"
     />
-    <div class="absolute bottom-0 w-full flex flex-col text-white px-2 py-1 gap-1" v-if="isPreview">
+    <div
+      class="absolute bottom-0 w-full flex flex-col text-white px-2 py-1 gap-1 transition-all ease-in-out duration-500"
+      v-if="isPreview"
+    >
       <ProgressBar
         :style="progress"
         :value="(timer / videoElement?.duration) * 100"
