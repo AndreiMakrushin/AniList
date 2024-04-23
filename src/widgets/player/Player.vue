@@ -19,7 +19,7 @@ const props = defineProps<{
   animeId?: number
 }>()
 
-const episodeAnime = ref<number>(1)
+const episodeAnime = ref<number>(animeStore.animeEpisode)
 const quality = ref<string>('hd')
 const timer = ref<number>(0)
 const fullscreen = ref<boolean>(false)
@@ -126,7 +126,7 @@ const nextEpisode = () => {
   episodeAnime.value++
 }
 const prevEpisode = () => {
-  if (episodeAnime.value === 0) return
+  if (episodeAnime.value === 1) return
   episodeAnime.value--
 }
 const seekVideo = (e: MouseEvent | TouchEvent) => {

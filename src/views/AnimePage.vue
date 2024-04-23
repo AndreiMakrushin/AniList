@@ -9,6 +9,7 @@ import Player from '@/widgets/player/Player.vue'
 const route = useRoute()
 const anime = ref<Anime | null>(null)
 onMounted(async () => {
+  console.log(route.params.id);
   const res = await axios.get(`${API_anime}${route.params.id}`)
   console.log(res.data)
   return (anime.value = res.data)
