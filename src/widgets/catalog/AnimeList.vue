@@ -65,12 +65,12 @@ onBeforeUnmount(() => {
       </div>
       <div class="flex flex-col items-center w-full">
         <h2
-          class="font-medium w-full duration-300 whitespace-nowrap text-ellipsis overflow-hidden"
+          class="font-medium w-full text-white duration-300 whitespace-nowrap text-ellipsis overflow-hidden"
           :class="{ 'text-red-500': hovered === i }"
         >
           {{ i.names.ru }}
         </h2>
-        <p class="font-medium text-gray-500">{{ i.season.year }}</p>
+        <p class="font-medium text-[#ccc7c7]">{{ i.season.year }}</p>
       </div>
     </article>
   </div>

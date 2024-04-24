@@ -49,7 +49,7 @@ onMounted(() => {
       <div class="flex flex-row gap-4 w-[60%]">
         <span class="items-center flex" v-if="mobie">&#x2630;</span>
         <span
-          class="text-[20px] font-medium cursor-pointer hover:text-red-500 duration-short"
+          class="text-[20px] font-medium cursor-pointer text-white hover:text-red-500 duration-short"
           @click="router.push('/')"
           >AniList</span
         >
