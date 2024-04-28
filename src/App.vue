@@ -5,6 +5,7 @@ import { useAnimeStore } from '@/stores/animeStore'
 import Header from './widgets/header/Header.vue'
 import RegistrationAndAutorisationModal from './widgets/modals/regAuth/RegistrationAndAutorisationModal.vue'
 import UploadAvatar from './widgets/modals/uploadAvatar/UploadAvatar.vue'
+import Footer from './widgets/footer/Footer.vue'
 
 const animeStore = useAnimeStore()
 
@@ -18,7 +19,9 @@ onMounted(() => {
       <Header />
       <RegistrationAndAutorisationModal />
       <UploadAvatar />
-      <RouterView />
+      <RouterView />  
+      
     </div>
+    <Footer />
 </template>
 

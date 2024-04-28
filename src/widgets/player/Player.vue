@@ -5,12 +5,13 @@ import SelectEpisode from './widgetsPlayer/SelectEpisode.vue'
 import IconSprite from '@/shared/IconSprite.vue'
 import Preview from './widgetsPlayer/Preview.vue'
 import ProgressBar from './widgetsPlayer/ProgressBar.vue'
-import type { Anime, User, addAnime } from '@/stores/types'
+import Button from '../../shared/ui/Button.vue'
+import type { Anime } from '@/stores/types'
 import noImg from '@/assets/img/noimg.jpeg'
 import { supabase } from '@/supabase'
 import { useAnimeStore } from '@/stores/animeStore'
 import { updateAnimeHistory } from '../../features/updateAnime/updateAnime'
-import {addNewAnimeHistory} from '../../features/addAnime/addAnime'
+import { addNewAnimeHistory } from '../../features/addAnime/addAnime'
 const animeStore = useAnimeStore()
 
 const props = defineProps<{
@@ -27,6 +28,7 @@ const videoElement = ref<HTMLVideoElement | null>(null)
 const isPreview = ref<boolean>(false)
 const playing = ref<boolean>(false)
 const isQualityVideo = ref<boolean>(false)
+const bufferedVideo = ref<number | null | undefined>(0)
 
 const seria = computed(() => {
   return 'https://cache.libria.fun' + props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]
@@ -68,7 +70,7 @@ const playVideo = () => {
   isPreview.value = true
   playing.value = true
   videoElement.value.play()
-  addAnimeToHistory()
+  /* addAnimeToHistory() */
 }
 
 const videoPaused = () => {
@@ -114,6 +116,13 @@ const progress = computed(() => {
     width: `${(timer.value / videoElement.value?.duration) * 100}%`
   }
 })
+const buffered = computed(() => {
+  if (!videoElement.value) return
+  if (!bufferedVideo.value) return
+  return {
+    width: `${(bufferedVideo.value / videoElement.value?.duration) * 100}%`
+  }
+})
 watch(timer, () => {
   if (timer.value === videoElement.value?.duration) {
     episodeAnime.value++
@@ -145,6 +154,7 @@ const seekVideo = (e: MouseEvent | TouchEvent) => {
 
   const newTime = (clickX / progressWidth) * (videoElement.value?.duration || 0)
   videoElement.value.currentTime = newTime
+  videoElement.value.buffered.end(0) >= newTime
 }
 const fullScreen = () => {
   if (!videoElement.value) return
@@ -173,42 +183,6 @@ const updateQuality = (event: string) => {
   isQualityVideo.value = false
 }
 
-/* const addNewAnimeHistory = async () => {
-  if (!animeStore.user) return
-  try {
-    await supabase.from('animeUserList').insert({
-      animeId: props.animeId,
-      userId: animeStore.user.id,
-      current_Time: Math.floor(timer.value),
-      duration_Time: Math.floor(videoElement.value?.duration || 0),
-      nameAnime: props.animeName,
-      img:
-        'https://dl-20211030-963.anilib.top' + props.AnimePlay?.list[episodeAnime.value]?.preview,
-      episode: episodeAnime.value
-    })
-  } catch (insertError) {
-    console.log(insertError)
-  }
-} */
-/* const updateAnimeHistory = async () => {
-  if (!animeStore.user) return
-  try {
-    await supabase
-      .from('animeUserList')
-      .update({
-        current_Time: timer.value
-      })
-      .match({
-        animeId: props.animeId,
-        episode: episodeAnime.value,
-        userId: animeStore.user.id
-      })
-    return
-  } catch (updateError) {
-    console.log(updateError)
-  }
-} */
-
 async function addAnimeToHistory() {
   if (!animeStore.user) return
   try {
@@ -219,7 +193,6 @@ async function addAnimeToHistory() {
       .filter('episode', 'eq', episodeAnime.value)
       .filter('userId', 'eq', animeStore.user.id)
       .single()
-    console.log(existsAnime)
     if (videoElement.value && existsAnime) {
       videoElement.value.currentTime = existsAnime.current_Time
       return
@@ -249,17 +222,33 @@ watch(timer, () => {
     updateAnimeHistory(animeStore.user.id, props.animeId, episodeAnime.value, timer.value)
   }
 })
+const downloadImage = (canvas: HTMLCanvasElement) => {
+  console.log(canvas);
+  const image = canvas.toDataURL('image/png')
+  const link = document.createElement('a')
+  link.href = image
+  link.download = 'screenshot.png'
+  link.click()
+}
+const screenShot = () => {
+  if (!videoElement.value) return
+  const canvas = document.createElement('canvas')
+  canvas.width = videoElement.value.videoWidth
+  canvas.height = videoElement.value.videoHeight
+  canvas.getContext('2d')?.drawImage(videoElement.value, 0, 0)
+  downloadImage(canvas)
+}
 </script>
 
 <template>
   <div
-    class="max-w-[700px] max-h-[400px] relative flex flex-col bg-slate-800 rounded-[10px]"
+    class="max-w-[700px] h-[100%] relative flex flex-col bg-slate-800 rounded-[10px]"
     id="player"
   >
     <Preview
       :previewAnime="previewAnime ? previewAnime : noImg"
       v-if="!isPreview"
-      @click="playVideo()"
+      @click="playVideo(), addAnimeToHistory()"
     />
 
     <video
@@ -284,6 +273,7 @@ watch(timer, () => {
       <ProgressBar
         :style="progress"
         :value="(timer / videoElement?.duration) * 100"
+        :bufferedVideo="buffered"
         @update="seekVideo($event)"
       />
 
@@ -308,6 +298,8 @@ watch(timer, () => {
             {{ videoTime }}
             / {{ videoDuration }}
           </p>
+          <IconSprite name="icon-screenShot" @click="screenShot" class="cursor-pointer"/>
+          <!-- <Button :text="'Скрин'" @click="screenShot" /> -->
         </div>
         <div class="flex flex-row gap-3">
           <IconSprite

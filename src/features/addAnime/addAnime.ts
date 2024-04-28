@@ -9,7 +9,7 @@ export const addNewAnimeHistory = async (anime: addAnime) => {
       current_Time: Math.floor(anime.current_Time),
       duration_Time: Math.floor(anime.duration_Time),
       nameAnime: anime.nameAnime,
-      img: 'https://dl-20211030-963.anilib.top' + anime.img,
+      img: anime.img ? 'https://dl-20211030-963.anilib.top' + anime.img : null,
       episode: anime.episode
     });
   } catch (insertError) {

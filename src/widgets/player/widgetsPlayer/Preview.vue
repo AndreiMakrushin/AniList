@@ -11,7 +11,7 @@ const props = defineProps<PreviewProps>()
 </script>
 
 <template>
- <div class="absolute w-full"  >
+ <div class="w-full"  >
       <img :src="previewAnime" class="w-full rounded-[10px]" />
       <IconSprite
         name="icon-play"

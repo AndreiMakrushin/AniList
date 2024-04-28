@@ -4,6 +4,7 @@ import { defineProps, defineEmits } from 'vue';
 const props = defineProps<{
   value?: number | undefined;
   style?: object | undefined;
+  bufferedVideo?: number | undefined;
 }>();
 
 const emit = defineEmits(['update']);
@@ -18,6 +19,10 @@ const emited = (event: Event) => {
     <div
       class="absolute z-10 h-full duration-short bg-slate-500 rounded-[5px] cursor-pointer"
       :style="props.style"
+    ></div>
+    <div
+      class="absolute z-15 h-full duration-short bg-[#8a8989] rounded-[5px] cursor-pointer"
+      :style="props.bufferedVideo"
     ></div>
     <input
       type="range"

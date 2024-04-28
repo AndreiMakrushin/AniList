@@ -2,9 +2,10 @@
 import { useAnimeStore } from '@/stores/animeStore'
 import Profile from '@/widgets/profile/Profile.vue'
 import { supabase } from '@/supabase'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
-import type { addAnime } from '@/stores/types'
+import { computed, onMounted, onUnmounted, onUpdated, ref, watch } from 'vue'
+import type { addAnime, User } from '@/stores/types'
 import { useRouter } from 'vue-router'
+import noimg from '@/assets/img/noimg.jpeg'
 
 const router = useRouter()
 const animeStore = useAnimeStore()
@@ -16,11 +17,16 @@ const deleteAvatar = async () => {
 const getAnime = async () => {
   const { data } = await supabase.from('animeUserList').select().eq('userId', animeStore.user.id)
   aniHistory.value = data
+  console.log(data);
 }
 onMounted(() => {
-  if (animeStore.user) {
-    getAnime()
-  }
+  if (!animeStore.user) return
+  getAnime()
+})
+
+watch(() => animeStore.user, () => {
+  if (!animeStore.user) return
+  getAnime()
 })
 
 const reverceAnime = computed(() => {
@@ -29,6 +35,8 @@ const reverceAnime = computed(() => {
 onUnmounted(() => {
   animeStore.animeEpisode = 1
 })
+
+
 </script>
 
 <template>
@@ -43,13 +51,13 @@ onUnmounted(() => {
       <div
         v-for="i in reverceAnime"
         :key="i"
-        class="relative cursor-pointer flex gap-5 rounded-[10px]"
+        class="relative cursor-pointer flex gap-5 rounded-[10px] overflow-hidden"
         @click="router.push(`/anime/${i.animeId}`), (animeStore.animeEpisode = i.episode)"
       >
-        <img :src="i.img" alt="" class="w-[100%]" />
-        <div class="absolute bottom-0 left-0 flex flex-col">
+        <img :src="i.img === null ? noimg : i.img" alt="" class="w-[100%]" />
+        <div class="absolute bottom-0 left-0 flex flex-col bg-white w-[100%] px-2">
           <h1 class="text-[30px]">{{ i.nameAnime }}</h1>
-          <h3>эпизод: {{ i.episode }}</h3>
+          <h3>Серия: {{ i.episode }}</h3>
         </div>
       </div>
     </div>
