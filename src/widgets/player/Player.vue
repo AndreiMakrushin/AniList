@@ -214,6 +214,7 @@ async function addAnimeToHistory() {
 
 const timeUpdate = () => {
   timer.value = Math.floor(videoElement.value?.currentTime)
+  console.log(videoElement.value?.buffered.end(0));
 }
 
 watch(timer, () => {
@@ -298,7 +299,7 @@ const screenShot = () => {
             {{ videoTime }}
             / {{ videoDuration }}
           </p>
-          <IconSprite name="icon-screenShot" @click="screenShot" class="cursor-pointer"/>
+          <IconSprite name="icon-screenShot" @click.stop="screenShot" class="cursor-pointer"/>
           <!-- <Button :text="'Скрин'" @click="screenShot" /> -->
         </div>
         <div class="flex flex-row gap-3">

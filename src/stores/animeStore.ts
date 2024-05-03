@@ -95,7 +95,6 @@ export const useAnimeStore = defineStore('animestore', () => {
   }
 
 
-
     supabase
       .channel('users')
       .on('postgres_changes', {event: '*', schema: 'public', table: 'users'}, (payload: any) => {
