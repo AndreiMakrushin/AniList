@@ -17,17 +17,19 @@ const deleteAvatar = async () => {
 const getAnime = async () => {
   const { data } = await supabase.from('animeUserList').select().eq('userId', animeStore.user.id)
   aniHistory.value = data
-  console.log(data);
 }
 onMounted(() => {
   if (!animeStore.user) return
   getAnime()
 })
 
-watch(() => animeStore.user, () => {
-  if (!animeStore.user) return
-  getAnime()
-})
+watch(
+  () => animeStore.user,
+  () => {
+    if (!animeStore.user) return
+    getAnime()
+  }
+)
 
 const reverceAnime = computed(() => {
   return aniHistory.value?.reverse()
@@ -35,8 +37,6 @@ const reverceAnime = computed(() => {
 onUnmounted(() => {
   animeStore.animeEpisode = 1
 })
-
-
 </script>
 
 <template>
@@ -55,9 +55,18 @@ onUnmounted(() => {
         @click="router.push(`/anime/${i.animeId}`), (animeStore.animeEpisode = i.episode)"
       >
         <img :src="i.img === null ? noimg : i.img" alt="" class="w-[100%]" />
-        <div class="absolute bottom-0 left-0 flex flex-col bg-white w-[100%] px-2">
-          <h1 class="text-[30px]">{{ i.nameAnime }}</h1>
-          <h3>Серия: {{ i.episode }}</h3>
+        <div class="absolute bottom-0 left-0 flex flex-col bg-white w-[100%]">
+          <div class="relative flex">
+            <span class="w-full flex h-[5px] bg-slate-300"></span>
+            <span
+              class="h-[5px] bg-red-500 absolute top-0 left-0"
+              :style="`width: ${(i.current_Time / i.duration_Time) * 100}%`"
+            ></span>
+          </div>
+          <div class="px-2">
+            <h1 class="text-[20px]">{{ i.nameAnime }}</h1>
+            <h3>Серия: {{ i.episode }}</h3>
+          </div>
         </div>
       </div>
     </div>

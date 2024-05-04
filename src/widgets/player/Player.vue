@@ -214,7 +214,6 @@ async function addAnimeToHistory() {
 
 const timeUpdate = () => {
   timer.value = Math.floor(videoElement.value?.currentTime)
-  console.log(videoElement.value?.buffered.end(0));
 }
 
 watch(timer, () => {

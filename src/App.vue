@@ -22,6 +22,6 @@ onMounted(() => {
       <RouterView />  
       
     </div>
-    <Footer />
+    <!-- <Footer /> -->
 </template>
 
