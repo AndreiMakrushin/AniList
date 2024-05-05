@@ -52,7 +52,7 @@ onUnmounted(() => {
         v-for="i in reverceAnime"
         :key="i"
         class="relative cursor-pointer flex gap-5 rounded-[10px] overflow-hidden"
-        @click="router.push(`/anime/${i.animeId}`), (animeStore.animeEpisode = i.episode)"
+        @click="router.push({ name: 'anime', params: { id: i.animeId, episode: i.episode } })"
       >
         <img :src="i.img === null ? noimg : i.img" alt="" class="w-[100%]" />
         <div class="absolute bottom-0 left-0 flex flex-col bg-white w-[100%]">
@@ -74,3 +74,4 @@ onUnmounted(() => {
 </template>
 
 <style scoped></style>
+/* @click="router.push(`/anime/${i.animeId}`), (animeStore.animeEpisode = i.episode)" */

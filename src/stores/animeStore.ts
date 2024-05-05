@@ -11,7 +11,6 @@ export const useAnimeStore = defineStore('animestore', () => {
   const searchedAnime = ref<Anime[]>([])
   const animeCount = ref<number>(20)
   const animePage = ref<number>(1)
-  const animeEpisode = ref<number>(1)
 
 /*   const animeList = async () => {
     const response = await axios.get(`${API_list}${animePage.value}&limit=${animeCount.value}`)
@@ -120,5 +119,5 @@ export const useAnimeStore = defineStore('animestore', () => {
   }
 
 
-  return { login, registerUser, user, getUser, logout, recoverPassword, modal, authRegModal, aniList, animeCount,  animePage, searchedAnime, animeEpisode }
+  return { login, registerUser, user, getUser, logout, recoverPassword, modal, authRegModal, aniList, animeCount,  animePage, searchedAnime }
 })

@@ -5,8 +5,7 @@ import SelectEpisode from './widgetsPlayer/SelectEpisode.vue'
 import IconSprite from '@/shared/IconSprite.vue'
 import Preview from './widgetsPlayer/Preview.vue'
 import ProgressBar from './widgetsPlayer/ProgressBar.vue'
-import Button from '../../shared/ui/Button.vue'
-import type { Anime } from '@/stores/types'
+import type { Anime, User } from '@/stores/types'
 import noImg from '@/assets/img/noimg.jpeg'
 import { supabase } from '@/supabase'
 import { useAnimeStore } from '@/stores/animeStore'
@@ -15,12 +14,14 @@ import { addNewAnimeHistory } from '../../features/addAnime/addAnime'
 const animeStore = useAnimeStore()
 
 const props = defineProps<{
+  user?: User
+  episode?: number | undefined
   AnimePlay?: Anime
   animeName?: string
   animeId?: number
 }>()
 
-const episodeAnime = ref<number>(animeStore.animeEpisode)
+const episodeAnime = ref<number>(1)
 const quality = ref<string>('hd')
 const timer = ref<number>(0)
 const fullscreen = ref<boolean>(false)
@@ -29,6 +30,10 @@ const isPreview = ref<boolean>(false)
 const playing = ref<boolean>(false)
 const isQualityVideo = ref<boolean>(false)
 const bufferedVideo = ref<number | null | undefined>(0)
+
+watch(props, () => {
+  episodeAnime.value = props.episode
+})
 
 const seria = computed(() => {
   return 'https://cache.libria.fun' + props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]
@@ -57,9 +62,10 @@ onMounted(() => {
 watch(episodeAnime, () => {
   isPreview.value = false
 })
+const emit = defineEmits(['updateEpisode'])
 
 const updateEpisode = (event: string) => {
-  episodeAnime.value = parseInt(event)
+  emit('updateEpisode', Number(event))
 }
 const playVideo = () => {
   if (isQualityVideo.value) {
@@ -184,14 +190,14 @@ const updateQuality = (event: string) => {
 }
 
 async function addAnimeToHistory() {
-  if (!animeStore.user) return
+  if (!props.user === undefined) return
   try {
     const { data: existsAnime, error: existsAnimeError } = await supabase
       .from('animeUserList')
       .select()
       .filter('animeId', 'eq', props.animeId)
       .filter('episode', 'eq', episodeAnime.value)
-      .filter('userId', 'eq', animeStore.user.id)
+      .filter('userId', 'eq', props.user.id)
       .single()
     if (videoElement.value && existsAnime) {
       videoElement.value.currentTime = existsAnime.current_Time
@@ -202,7 +208,7 @@ async function addAnimeToHistory() {
   }
   const anime = {
     animeId: props.animeId,
-    userId: animeStore.user.id,
+    userId: props.user.id,
     current_Time: timer.value,
     duration_Time: Math.floor(videoElement.value?.duration || 0),
     nameAnime: props.animeName,
@@ -217,13 +223,13 @@ const timeUpdate = () => {
 }
 
 watch(timer, () => {
-  if (!animeStore.user) return
+  if (!props.user === undefined) return
   if (timer.value >= 10) {
-    updateAnimeHistory(animeStore.user.id, props.animeId, episodeAnime.value, timer.value)
+    updateAnimeHistory(props.user.id, props.animeId, episodeAnime.value, timer.value)
   }
 })
 const downloadImage = (canvas: HTMLCanvasElement) => {
-  console.log(canvas);
+  console.log(canvas)
   const image = canvas.toDataURL('image/png')
   const link = document.createElement('a')
   link.href = image
@@ -298,8 +304,7 @@ const screenShot = () => {
             {{ videoTime }}
             / {{ videoDuration }}
           </p>
-          <IconSprite name="icon-screenShot" @click.stop="screenShot" class="cursor-pointer"/>
-          <!-- <Button :text="'Скрин'" @click="screenShot" /> -->
+          <IconSprite name="icon-screenShot" @click.stop="screenShot" class="cursor-pointer" />
         </div>
         <div class="flex flex-row gap-3">
           <IconSprite

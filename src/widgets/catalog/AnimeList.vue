@@ -46,7 +46,7 @@ onBeforeUnmount(() => {
     <article
       v-for="i in props.anime"
       :key="i"
-      @click="router.push(`/anime/${i.id}`)"
+      @click="router.push({ name: 'anime', params: { id: i.id, episode: '1' } })"
       @mouseover="hovered = i"
       @mouseleave="hovered = null"
       class="flex flex-col items-center gap-3 cursor-pointer"

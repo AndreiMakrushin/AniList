@@ -39,11 +39,10 @@ const close = (event) => {
 
 <style scoped>
 .scrollBar::-webkit-scrollbar {
-  width: 1px;
+  width: 3px;
   border-radius: 2px;
 }
 .scrollBar {
-  scrollbar-width: thin;
   scrollbar-color: white;
   border-radius: 2px;
 }

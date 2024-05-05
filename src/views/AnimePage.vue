@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import { API_anime } from '@/composables'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import type { Anime } from '@/stores/types'
 import Player from '@/widgets/player/Player.vue'
+import { useAnimeStore } from '../stores/animeStore'
+
+const animeStore = useAnimeStore()
 
 const route = useRoute()
+const router = useRouter()
 const anime = ref<Anime | null>(null)
 onMounted(async () => {
-  console.log(route.params.id);
   const res = await axios.get(`${API_anime}${route.params.id}`)
   console.log(res.data)
   return (anime.value = res.data)
 })
 
-
-const dataAnime = (data) => {
+const dataAnime = (data: number) => {
   const date = new Date(data * 1000)
   const year = date.getFullYear()
   const mounth = ('0' + (date.getMonth() + 1)).slice(-2)
@@ -24,7 +26,7 @@ const dataAnime = (data) => {
   return `${day}.${mounth}.${year}`
 }
 const animeLength = computed(() => {
-  return anime.value ? Object.keys(anime.value?.player?.list).length : 0;
+  return anime.value ? Object.keys(anime.value?.player?.list).length : 0
 })
 </script>
 
@@ -67,7 +69,14 @@ const animeLength = computed(() => {
       </div>
       <p>Описание: {{ anime?.description }}</p>
 
-      <Player :AnimePlay="anime?.player" :animeName="anime?.names.ru" :animeId="anime?.id"/>
+      <Player
+        :user="animeStore?.user"
+        :AnimePlay="anime?.player"
+        :animeName="anime?.names.ru"
+        :animeId="anime?.id"
+        :episode="Number(route.params.episode)"
+        @updateEpisode="router.push({ name: 'anime', params: { id: anime?.id, episode: $event } })"
+      />
     </div>
   </div>
 </template>
