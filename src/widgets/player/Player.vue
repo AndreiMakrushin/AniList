@@ -294,10 +294,6 @@ const transitionInterfaceShow = computed(() => {
       :controls="false"
     ></video>
     <SelectEpisode
-      @mouseenter="showInterfaceMouse"
-      @mouseleave="hideInterfaceMouse"
-      @mousemove="showInterfaceMouse"
-      :class="transitionInterfaceShow"
       class="absolute top-2 right-2"
       :episodes="props.AnimePlay?.list"
       :selected="episodeAnime"
