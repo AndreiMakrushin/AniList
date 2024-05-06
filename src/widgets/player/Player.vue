@@ -193,7 +193,7 @@ const updateQuality = (event: string) => {
 }
 
 async function addAnimeToHistory() {
-  if (!props.user === undefined) return
+  if (props.user === null) return
   try {
     const { data: existsAnime, error: existsAnimeError } = await supabase
       .from('animeUserList')
@@ -226,7 +226,7 @@ const timeUpdate = () => {
 }
 
 watch(timer, () => {
-  if (!props.user === undefined) return
+  if (props.user === null) return
   if (timer.value >= 10) {
     updateAnimeHistory(props.user.id, props.animeId, episodeAnime.value, timer.value)
   }
