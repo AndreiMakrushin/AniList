@@ -30,6 +30,7 @@ const isPreview = ref<boolean>(false)
 const playing = ref<boolean>(false)
 const isQualityVideo = ref<boolean>(false)
 const bufferedVideo = ref<number | null | undefined>(0)
+const showInterface = ref<boolean>(false)
 
 watch(props, () => {
   episodeAnime.value = props.episode
@@ -67,6 +68,7 @@ const emit = defineEmits(['updateEpisode'])
 const updateEpisode = (event: string) => {
   emit('updateEpisode', Number(event))
 }
+/* ------------------------------------------------------------------------------------ */
 const playVideo = () => {
   if (isQualityVideo.value) {
     isQualityVideo.value = false
@@ -87,8 +89,9 @@ const videoPaused = () => {
   if (!videoElement.value) return
   playing.value = false
   videoElement.value.pause()
+  showInterface.value = true
 }
-
+/* ------------------------------------------------------------------------------------ */
 const videoTimer = (time: number) => {
   const minutes = Math.floor((time % 3600) / 60)
   const seconds = Math.floor((time % 3600) % 60)
@@ -244,6 +247,27 @@ const screenShot = () => {
   canvas.getContext('2d')?.drawImage(videoElement.value, 0, 0)
   downloadImage(canvas)
 }
+let showindTimeout: any;
+
+const showInterfaceMouse = () => {
+  console.log('показываю интерфейс');
+  
+  clearTimeout(showindTimeout)
+  showInterface.value = true
+  showindTimeout = setTimeout(() => {
+    showInterface.value = false
+  }, 3000)
+}
+const hideInterfaceMouse = () => {
+  if (!playing.value) return
+  showindTimeout = setTimeout(() => {
+    showInterface.value = false
+  }, 3000)
+}
+
+const transitionInterfaceShow = computed(() => {
+  return `${showInterface.value ? 'opacity-1 duration-short' : 'opacity-0 duration-short'}`
+})
 </script>
 
 <template>
@@ -258,6 +282,9 @@ const screenShot = () => {
     />
 
     <video
+      @mouseenter="showInterfaceMouse"
+      @mouseleave="hideInterfaceMouse"
+      @mousemove="showInterfaceMouse"
       id="my-video"
       v-show="isPreview"
       class="w-full h-full rounded-[10px]"
@@ -267,12 +294,20 @@ const screenShot = () => {
       :controls="false"
     ></video>
     <SelectEpisode
+      @mouseenter="showInterfaceMouse"
+      @mouseleave="hideInterfaceMouse"
+      @mousemove="showInterfaceMouse"
+      :class="transitionInterfaceShow"
       class="absolute top-2 right-2"
       :episodes="props.AnimePlay?.list"
       :selected="episodeAnime"
       @update="updateEpisode($event)"
     />
     <div
+      @mouseenter="showInterfaceMouse"
+      @mouseleave="hideInterfaceMouse"
+      @mousemove="showInterfaceMouse"
+      :class="transitionInterfaceShow"
       class="absolute bottom-0 w-full flex flex-col text-white px-2 py-1 gap-1 transition-all ease-in-out duration-500"
       v-if="isPreview"
     >
@@ -329,6 +364,9 @@ const screenShot = () => {
     </div>
 
     <div
+      @mouseenter="showInterfaceMouse"
+      @mouseleave="hideInterfaceMouse"
+      @mousemove="showInterfaceMouse"
       class="absolute text-white bottom-10 right-5 bg-gray-500 rounded-[10px] overflow-hidden"
       v-if="isQualityVideo"
     >
