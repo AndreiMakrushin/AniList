@@ -2,16 +2,16 @@
 import { onMounted, defineProps, ref, watch, computed, reactive } from 'vue'
 import Hls from 'hls.js'
 import SelectEpisode from './widgetsPlayer/SelectEpisode.vue'
-import IconSprite from '@/shared/IconSprite.vue'
 import Preview from './widgetsPlayer/Preview.vue'
 import ProgressBar from './widgetsPlayer/ProgressBar.vue'
+import Controllers from './widgetsPlayer/Controllers.vue'
 import type { Anime, User } from '@/stores/types'
 import noImg from '@/assets/img/noimg.jpeg'
+import { screenShot } from '../../features/screenShoter/screenshoter'
+import QualityVideo from './widgetsPlayer/QualityVideo.vue'
 import { supabase } from '@/supabase'
-import { useAnimeStore } from '@/stores/animeStore'
 import { updateAnimeHistory } from '../../features/updateAnime/updateAnime'
 import { addNewAnimeHistory } from '../../features/addAnime/addAnime'
-const animeStore = useAnimeStore()
 
 const props = defineProps<{
   user?: User
@@ -29,7 +29,6 @@ const videoElement = ref<HTMLVideoElement | null>(null)
 const isPreview = ref<boolean>(false)
 const playing = ref<boolean>(false)
 const isQualityVideo = ref<boolean>(false)
-const bufferedVideo = ref<number | null | undefined>(0)
 const showInterface = ref<boolean>(false)
 
 watch(props, () => {
@@ -68,7 +67,6 @@ const emit = defineEmits(['updateEpisode'])
 const updateEpisode = (event: string) => {
   emit('updateEpisode', Number(event))
 }
-/* ------------------------------------------------------------------------------------ */
 const playVideo = () => {
   if (isQualityVideo.value) {
     isQualityVideo.value = false
@@ -78,7 +76,6 @@ const playVideo = () => {
   isPreview.value = true
   playing.value = true
   videoElement.value.play()
-  /* addAnimeToHistory() */
 }
 
 const videoPaused = () => {
@@ -91,7 +88,6 @@ const videoPaused = () => {
   videoElement.value.pause()
   showInterface.value = true
 }
-/* ------------------------------------------------------------------------------------ */
 const videoTimer = (time: number) => {
   const minutes = Math.floor((time % 3600) / 60)
   const seconds = Math.floor((time % 3600) % 60)
@@ -114,26 +110,12 @@ const videoTime = computed(() => {
 const videoDuration = computed(() => {
   if (!videoElement.value) return
   const time = Math.floor(videoElement.value?.duration)
-
   return videoTimer(time)
 })
 
-const progress = computed(() => {
-  if (!videoElement.value) return
-  if (!timer.value) return
-  return {
-    width: `${(timer.value / videoElement.value?.duration) * 100}%`
-  }
-})
-const buffered = computed(() => {
-  if (!videoElement.value) return
-  if (!bufferedVideo.value) return
-  return {
-    width: `${(bufferedVideo.value / videoElement.value?.duration) * 100}%`
-  }
-})
 watch(timer, () => {
-  if (timer.value === videoElement.value?.duration) {
+  if (!videoElement.value) return
+  if (timer.value === Math.floor(videoElement.value?.duration)) {
     episodeAnime.value++
   }
 })
@@ -146,26 +128,6 @@ const nextEpisode = () => {
 const prevEpisode = () => {
   if (episodeAnime.value === 1) return
   episodeAnime.value--
-}
-const seekVideo = (e: MouseEvent | TouchEvent) => {
-  console.log('перемещаю видео');
-  
-  if (!videoElement.value) return
-
-  const progressWidth = (e.target as HTMLElement).offsetWidth
-  let clickX = 0
-
-  if (e instanceof MouseEvent) {
-    clickX = (e as MouseEvent).offsetX
-  } else if (e instanceof TouchEvent) {
-    clickX =
-      (e as TouchEvent).changedTouches[0].clientX -
-      (e.target as HTMLElement).getBoundingClientRect().left
-  }
-
-  const newTime = (clickX / progressWidth) * (videoElement.value?.duration || 0)
-  videoElement.value.currentTime = newTime
-  videoElement.value.buffered.end(0) >= newTime
 }
 const fullScreen = () => {
   if (!videoElement.value) return
@@ -193,7 +155,6 @@ const updateQuality = (event: string) => {
   quality.value = event
   isQualityVideo.value = false
 }
-
 async function addAnimeToHistory() {
   if (props.user === null) return
   try {
@@ -224,6 +185,7 @@ async function addAnimeToHistory() {
 }
 
 const timeUpdate = () => {
+  if (!videoElement.value) return
   timer.value = Math.floor(videoElement.value?.currentTime)
 }
 
@@ -233,43 +195,32 @@ watch(timer, () => {
     updateAnimeHistory(props.user.id, props.animeId, episodeAnime.value, timer.value)
   }
 })
-const downloadImage = (canvas: HTMLCanvasElement) => {
-  console.log(canvas)
-  const image = canvas.toDataURL('image/png')
-  const link = document.createElement('a')
-  link.href = image
-  link.download = 'screenshot.png'
-  link.click()
-}
-const screenShot = () => {
-  if (!videoElement.value) return
-  const canvas = document.createElement('canvas')
-  canvas.width = videoElement.value.videoWidth
-  canvas.height = videoElement.value.videoHeight
-  canvas.getContext('2d')?.drawImage(videoElement.value, 0, 0)
-  downloadImage(canvas)
-}
-let showindTimeout: any;
+let showindTimeout: any
 
-const showInterfaceMouse = () => {
-  console.log('показываю интерфейс');
-  
+const showInterfaceMouse = (event: boolean) => {
   clearTimeout(showindTimeout)
   showInterface.value = true
+  if (event === true) return
   showindTimeout = setTimeout(() => {
     showInterface.value = false
-  }, 3000)
+  }, 5000)
 }
 const hideInterfaceMouse = () => {
   if (!playing.value) return
   showindTimeout = setTimeout(() => {
     showInterface.value = false
-  }, 3000)
+  }, 5000)
 }
 
 const transitionInterfaceShow = computed(() => {
   return `${showInterface.value ? 'opacity-1 duration-short' : 'opacity-0 duration-short'}`
 })
+
+const rewindTheVideo = (e: number) => {
+  if (videoElement.value) {
+    videoElement.value.currentTime = e
+  }
+}
 </script>
 
 <template>
@@ -282,7 +233,6 @@ const transitionInterfaceShow = computed(() => {
       v-if="!isPreview"
       @click="playVideo(), addAnimeToHistory()"
     />
-
     <video
       @mouseenter="showInterfaceMouse"
       @mouseleave="hideInterfaceMouse"
@@ -302,65 +252,33 @@ const transitionInterfaceShow = computed(() => {
       @update="updateEpisode($event)"
     />
     <div
-      @mouseenter="showInterfaceMouse"
+      @mouseenter="showInterfaceMouse(true)"
       @mouseleave="hideInterfaceMouse"
-      @mousemove="showInterfaceMouse"
+      @mousemove="showInterfaceMouse(true)"
       :class="transitionInterfaceShow"
       class="absolute bottom-0 w-full flex flex-col text-white px-2 py-1 gap-1 transition-all ease-in-out duration-500"
       v-if="isPreview"
     >
       <ProgressBar
-        :style="progress"
-        :value="(timer / videoElement?.duration) * 100"
-        :bufferedVideo="buffered"
-        @update="seekVideo($event)"
+        :videoCurrentTime="videoElement?.currentTime"
+        :videoDurationTime="videoElement?.duration"
+        @rewind="rewindTheVideo($event)"
       />
-
-      <div class="flex flex-row items-center justify-between">
-        <div class="flex flex-row gap-2 items-center">
-          <IconSprite class="cursor-pointer" name="icon-prev" @click.stop="prevEpisode" />
-          <IconSprite
-            class="cursor-pointer"
-            name="icon-pause"
-            @click.stop="videoPaused"
-            v-if="playing"
-          />
-          <IconSprite
-            class="cursor-pointer"
-            name="icon-play-small"
-            @click.stop="playVideo"
-            v-if="!playing"
-          />
-          <IconSprite class="cursor-pointer" name="icon-next" @click.stop="nextEpisode" />
-
-          <p>
-            {{ videoTime }}
-            / {{ videoDuration }}
-          </p>
-          <IconSprite name="icon-screenShot" @click.stop="screenShot" class="cursor-pointer" />
-        </div>
-        <div class="flex flex-row gap-3">
-          <IconSprite
-            @click.stop="openSelectQuality"
-            name="icon-settings"
-            class="hover:rotate-[60deg] duration-short cursor-pointer"
-          />
-          <IconSprite
-            v-if="!fullscreen"
-            name="icon-fullScreen"
-            class="hover:scale-110 duration-short cursor-pointer"
-            @click="fullScreen()"
-          />
-          <IconSprite
-            v-else
-            name="icon-smallScreen"
-            class="hover:scale-20 duration-short cursor-pointer"
-            @click="normalScreen()"
-          />
-        </div>
-      </div>
+      <Controllers
+        :fullscreen="fullscreen"
+        :playing="playing"
+        :videoTime="videoTime"
+        :videoDuration="videoDuration"
+        @prevEpisode="prevEpisode"
+        @nextEpisode="nextEpisode"
+        @playVideo="playVideo"
+        @videoPaused="videoPaused"
+        @screenShot="screenShot(videoElement, videoElement.videoWidth, videoElement.videoHeight)"
+        @openSelectQuality="openSelectQuality"
+        @fullScreen="fullScreen"
+        @normalScreen="normalScreen"
+      />
     </div>
-
     <div
       @mouseenter="showInterfaceMouse"
       @mouseleave="hideInterfaceMouse"
@@ -368,17 +286,11 @@ const transitionInterfaceShow = computed(() => {
       class="absolute text-white bottom-10 right-5 bg-gray-500 rounded-[10px] overflow-hidden"
       v-if="isQualityVideo"
     >
-      <ol>
-        <li
-          class="cursor-pointer px-2 py-1 hover:bg-gray-700 duration-short"
-          :class="{ 'bg-gray-700': quality === key, hidden: q === null }"
-          v-for="(q, key) in props.AnimePlay?.list[episodeAnime]?.hls"
-          :key="key"
-          @click="updateQuality(key)"
-        >
-          {{ String(key) === 'fhd' ? 1080 : String(key) === 'hd' ? 720 : 480 }}p
-        </li>
-      </ol>
+      <QualityVideo
+        :quality="quality"
+        :animeQuality="props.AnimePlay?.list[episodeAnime]?.hls"
+        @updateQuality="updateQuality($event)"
+      />
     </div>
   </div>
 </template>

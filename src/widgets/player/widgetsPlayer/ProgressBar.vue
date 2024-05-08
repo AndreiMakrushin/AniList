@@ -1,16 +1,29 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, watch, ref, computed } from 'vue'
 
 const props = defineProps<{
-  value?: number | undefined;
-  style?: object | undefined;
-  bufferedVideo?: number | undefined;
-}>();
+  videoCurrentTime?: number
+  videoDurationTime?: number
+  style?: object | undefined
+}>()
 
-const emit = defineEmits(['update']);
+const emit = defineEmits(['rewind'])
 
-const emited = (event: Event) => {
-  emit('update', event);
+const progress = computed(() => {
+  if (!props.videoDurationTime || !props.videoCurrentTime) return
+  return {
+    width: `${(props.videoCurrentTime / props.videoDurationTime) * 100}%`
+  }
+})
+
+const value = computed(() => {
+  if (!props.videoDurationTime || !props.videoCurrentTime) return
+  return (props.videoCurrentTime / props.videoDurationTime) * 100
+})
+
+const onReving = (event: number) =>{
+  if (!props.videoDurationTime || !props.videoCurrentTime) return
+  emit('rewind', (props.videoDurationTime * event) / 100)
 }
 </script>
 
@@ -18,25 +31,21 @@ const emited = (event: Event) => {
   <div class="relative h-[5px] hover:h-[8px] duration-short bg-[#525151] rounded-[5px]">
     <div
       class="absolute z-10 h-full duration-short bg-slate-500 rounded-[5px] cursor-pointer"
-      :style="props.style"
-    ></div>
-    <div
-      class="absolute z-15 h-full duration-short bg-[#8a8989] rounded-[5px] cursor-pointer"
-      :style="props.bufferedVideo"
+      :style="progress"
     ></div>
     <input
       type="range"
       class="w-full absolute z-20 h-full"
-      @click="emited($event)"
-      @touchend="emited($event)"
       min="0"
       max="100"
-      :value="props.value"
+      :value="value"
+      @input="onReving($event.target.value)"
     />
   </div>
 </template>
 
 <style scoped>
+/* -webkit-appearance: none; */
 input[type='range'] {
   -webkit-appearance: none;
   cursor: pointer;
