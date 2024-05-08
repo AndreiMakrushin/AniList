@@ -7,12 +7,13 @@ import { API_list } from '@/composables'
 import { watch } from 'vue'
 
 const animeStore = useAnimeStore()
-
+const mapper = new Map()
 const addedAnime = (e: Anime[]) => {
   return (animeStore.aniList = e.reduce((acc: Anime[], obj: Anime) => {
-    if (acc.find((item) => item.id === obj.id)) {
+    if (mapper.get(obj.id)) {
       return acc
     }
+    mapper.set(obj.id, true)
     return [...acc, obj]
   }, animeStore.aniList))
 }
