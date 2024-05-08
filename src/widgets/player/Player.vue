@@ -148,6 +148,8 @@ const prevEpisode = () => {
   episodeAnime.value--
 }
 const seekVideo = (e: MouseEvent | TouchEvent) => {
+  console.log('перемещаю видео');
+  
   if (!videoElement.value) return
 
   const progressWidth = (e.target as HTMLElement).offsetWidth
