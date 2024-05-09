@@ -198,9 +198,14 @@ const realTimeUpdate = () => {
 
 watch(timer, () => {
   if (props.user === null) return
-  if (timer.value >= 10) {
-    updateAnimeHistory(props.user.id, props.animeId, episodeAnime.value, timer.value, realTimeUpdate())
-  }
+
+  updateAnimeHistory(
+    props.user.id,
+    props.animeId,
+    episodeAnime.value,
+    timer.value,
+    realTimeUpdate()
+  )
 })
 let showindTimeout: any
 

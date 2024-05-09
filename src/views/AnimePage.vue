@@ -5,7 +5,6 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import type { Anime } from '@/stores/types'
 import Player from '@/widgets/player/Player.vue'
-import SkeletonAnimePage from './../shared/ui/skeleton/SkeletonAnimePage.vue'
 import { useAnimeStore } from '../stores/animeStore'
 
 const animeStore = useAnimeStore()
@@ -32,8 +31,7 @@ const animeLength = computed(() => {
 </script>
 
 <template>
-  <SkeletonAnimePage v-if="!anime" />
-  <div v-else class="w-[100%] flex flex-row gap-0 md:gap-5 p-3 text-white text-[20px]">
+  <div  class="w-[100%] flex flex-row gap-0 md:gap-5 p-3 text-white text-[20px]">
     <div class="max-w-[300px] h-full rounded-[10px] overflow-hidden">
       <img
         class="hidden md:block"
