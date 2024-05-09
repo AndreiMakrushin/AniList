@@ -21,6 +21,7 @@
         "video.js": "^8.10.0",
         "vue": "^3.3.4",
         "vue-advanced-cropper": "^2.8.8",
+        "vue-content-loader": "^2.0.1",
         "vue-cropper": "^0.6.4",
         "vue-hls-video-player": "^1.0.1",
         "vue-router": "^4.2.5",

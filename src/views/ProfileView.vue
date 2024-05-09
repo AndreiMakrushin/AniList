@@ -32,7 +32,9 @@ watch(
 )
 
 const reverceAnime = computed(() => {
-  return aniHistory.value?.reverse()
+  return aniHistory.value
+    ?.filter((item: addAnime) => item.updated !== null)
+    .sort((a: addAnime, b: addAnime) => new Date(b.updated) - new Date(a.updated))
 })
 onUnmounted(() => {
   animeStore.animeEpisode = 1

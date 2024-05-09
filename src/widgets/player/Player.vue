@@ -189,10 +189,17 @@ const timeUpdate = () => {
   timer.value = Math.floor(videoElement.value?.currentTime)
 }
 
+const realTimeUpdate = () => {
+  const date = new Date().toLocaleDateString()
+  const time = new Date().toLocaleTimeString()
+
+  return `${date} ${time}`
+}
+
 watch(timer, () => {
   if (props.user === null) return
   if (timer.value >= 10) {
-    updateAnimeHistory(props.user.id, props.animeId, episodeAnime.value, timer.value)
+    updateAnimeHistory(props.user.id, props.animeId, episodeAnime.value, timer.value, realTimeUpdate())
   }
 })
 let showindTimeout: any

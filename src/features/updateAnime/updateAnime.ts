@@ -4,13 +4,15 @@ export const updateAnimeHistory = async (
   userId: number,
   animeId: number | undefined,
   episode: number,
-  timer: number
+  timer: number,
+  realTimeUpdate: string
 ) => {
   try {
     await supabase
       .from('animeUserList')
       .update({
-        current_Time: timer
+        current_Time: timer,
+        updated: realTimeUpdate
       })
       .match({
         animeId: animeId,
