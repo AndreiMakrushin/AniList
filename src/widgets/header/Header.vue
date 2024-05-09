@@ -27,7 +27,7 @@ const animeSearch = async () => {
 watch(searchAnime, async () => {
   if (searchAnime.value !== '') {
     animeSearch()
-  }else{
+  } else {
     animeStore.searchedAnime = []
   }
 })
@@ -45,43 +45,47 @@ onMounted(() => {
 
 <template>
   <header class="flex w-[100%] relative">
-    <div class="justify-between items-center flex px-4 py-2 w-full">
-      <div class="flex flex-row gap-4 w-[60%]">
-        <span class="items-center flex" v-if="mobie">&#x2630;</span>
-        <span
-          class="text-[20px] font-medium cursor-pointer text-white hover:text-red-500 duration-short"
-          @click="router.push('/')"
-          >AniList</span
-        >
-        <div v-if="!mobie" class="flex flex-row grow gap-5">
-          <Search
-            type="text"
-            :class="'focus:ring-cyan-300 bg-[#d8d8d8]'"
-            v-model="searchAnime"
-            :modelValue="searchAnime"
-          />
-          <!-- <Button
-            @click="animeSearch"
-            text="Поиск"
-            :style="'py-0 font-medium text-gray-500 hover:shadow-shadowDrop hover:ring-[1px] hover:ring-cyan-300 px-3 rounded-[15px]'"
-          /> -->
+    <div class="flex flex-col w-full">
+      <div class="justify-between items-center flex px-4 py-2 w-full">
+        <div class="flex flex-row gap-4 w-[60%]">
+          <span
+            class="text-[20px] font-medium cursor-pointer text-white hover:text-red-500 duration-short"
+            @click="router.push('/')"
+            >AniList</span
+          >
+          <div v-if="!mobie" class="flex flex-row grow gap-5">
+            <Search
+              type="text"
+              :class="'focus:ring-cyan-300 bg-[#d8d8d8]'"
+              v-model="searchAnime"
+              :modelValue="searchAnime"
+            />
+          </div>
         </div>
+        <main class="flex flex-row items-center gap-5">
+          <Switch />
+          <Avatar
+            v-if="animeStore.user"
+            :style="'w-[32px] h-[32px]'"
+            :img="animeStore.user.avatar_url"
+            @click="modalMenu = !modalMenu"
+          />
+          <Button
+            v-if="!animeStore.user"
+            @click="animeStore.authRegModal = true"
+            text="Войти"
+            :style="'p-0 font-medium text-gray-500'"
+          />
+        </main>
       </div>
-      <main class="flex flex-row items-center gap-5">
-        <Switch />
-        <Avatar
-          v-if="animeStore.user"
-          :style="'w-[32px] h-[32px]'"
-          :img="animeStore.user.avatar_url"
-          @click="modalMenu = !modalMenu"
+      <div v-if="mobie" class="flex flex-row grow gap-5 px-[16px] h-[30px]">
+        <Search
+          type="text"
+          :class="'focus:ring-cyan-300 bg-[#d8d8d8]'"
+          v-model="searchAnime"
+          :modelValue="searchAnime"
         />
-        <Button
-          v-if="!animeStore.user"
-          @click="animeStore.authRegModal = true"
-          text="Войти"
-          :style="'p-0 font-medium text-gray-500'"
-        />
-      </main>
+      </div>
     </div>
     <ModalMenu v-if="modalMenu" @click="modalMenu = false" :style="'right-[20px] top-[100%]'">
       <SvgButton>
