@@ -17,27 +17,28 @@ const progress = computed(() => {
 })
 
 const value = computed(() => {
-  if (!props.videoDurationTime || !props.videoCurrentTime) return
-  return (props.videoCurrentTime / props.videoDurationTime) * 100
+  if (!props.videoDurationTime || !props.videoCurrentTime) return 0
+  return (props.videoCurrentTime / props.videoDurationTime) * 1000
 })
 
-const onReving = (event: number) =>{
+const onReving = (event: number) => {
   if (!props.videoDurationTime || !props.videoCurrentTime) return
-  emit('rewind', (props.videoDurationTime * event) / 100)
+  emit('rewind', (props.videoDurationTime * event) / 1000)
 }
 </script>
 
 <template>
-  <div class="relative h-[5px] hover:h-[8px] duration-short bg-[#525151] rounded-[5px]">
+  <div class="relative h-[5px] duration-short bg-[#525151] rounded-[5px]">
     <div
-      class="absolute z-10 h-full duration-short bg-slate-500 rounded-[5px] cursor-pointer"
+      class="absolute z-10 h-full duration-short bg-slate-500 rounded-[5px] cursor-pointer justify-end items-center"
       :style="progress"
     ></div>
     <input
       type="range"
-      class="w-full absolute z-20 h-full"
+      class="w-full absolute z-20 h-full" 
+      step="1"
       min="0"
-      max="100"
+      max="1000"
       :value="value"
       @input="onReving($event.target.value)"
     />
@@ -56,10 +57,16 @@ input[type='range'] {
 }
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
-  height: 100%;
-  width: 0px;
+  --tw-bg-opacity: 1;
+  background-color: rgb(100 116 139 / var(--tw-bg-opacity));
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  cursor: pointer;
   transition:
     height 0.5s,
     width 0.5s;
 }
+
+
 </style>

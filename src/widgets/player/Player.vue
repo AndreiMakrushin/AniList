@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, defineProps, ref, watch, computed, reactive } from 'vue'
+import { onMounted, defineProps, ref, watch, computed, reactive, onUnmounted } from 'vue'
 import Hls from 'hls.js'
 import SelectEpisode from './widgetsPlayer/SelectEpisode.vue'
 import Preview from './widgetsPlayer/Preview.vue'
@@ -233,6 +233,42 @@ const rewindTheVideo = (e: number) => {
     videoElement.value.currentTime = e
   }
 }
+const handleKeyPress = (event: KeyboardEvent) => {
+  if (event.code === 'Space' && playing.value) {
+    videoPaused()
+  } else {
+    if (event.code === 'Space' && !playing.value) {
+      playVideo()
+      showInterface.value = false
+    }
+  }
+  if (event.code === 'ArrowRight' && videoElement.value) {
+    videoElement.value.currentTime += 5
+  }
+  if (event.code === 'ArrowLeft' && videoElement.value) {
+    videoElement.value.currentTime -= 5
+  }
+  if (event.code === 'Escape') {
+    fullscreen.value = false
+    normalScreen()
+    
+  }
+  if (event.code === 'ArrowUp') {
+    fullScreen()
+    fullscreen.value = true
+  }
+  if (event.code === 'ArrowDown') {
+    normalScreen()
+    fullscreen.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeyPress)
+})
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeyPress)
+})
 </script>
 
 <template>
