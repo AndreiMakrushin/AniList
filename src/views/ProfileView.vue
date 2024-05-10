@@ -4,30 +4,41 @@ import Profile from '@/widgets/profile/Profile.vue'
 import { supabase } from '@/supabase'
 import { computed, onMounted, onUnmounted, onUpdated, ref, watch } from 'vue'
 import type { addAnime, User } from '@/stores/types'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import noimg from '@/assets/img/noimg.jpeg'
 
 const router = useRouter()
+const route = useRoute()
 const animeStore = useAnimeStore()
 
 const aniHistory = ref<addAnime>(null)
 const deleteAvatar = async () => {
-  await supabase.from('users').update({ avatar_url: null }).match({ id: animeStore.user.id })
+  await supabase.from('users').update({ avatar_url: null }).match({ id: route.params.id })
 }
 const getAnime = async () => {
-  const { data } = await supabase.from('animeUserList').select().eq('userId', animeStore.user.id)
+  const { data } = await supabase.from('animeUserList').select().eq('userId', route.params.id)
   aniHistory.value = data
 }
-onMounted(() => {
-  if (!animeStore.user) return
-  getAnime()
+let timeout;
+const checkAuthorization = async () => {
+  if (!animeStore.user || animeStore.user.id.toString() !== route.params.id) {
+    timeout = setTimeout(async () => {
+      router.push('/')
+    }, 3000)
+    return
+  }
+  await getAnime()
+}
+
+onMounted(async () => {
+  await checkAuthorization()
 })
 
 watch(
   () => animeStore.user,
-  () => {
-    if (!animeStore.user) return
-    getAnime()
+  async () => {
+    clearTimeout(timeout)
+    await checkAuthorization()
   }
 )
 
@@ -44,7 +55,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col w-[100%] justify-center items-center mt-3">
     <Profile
-      :user="animeStore.user"
+      :user="animeStore?.user?.id === Number(route.params.id) ? animeStore.user : null"
       @loadAvatar="animeStore.modal = $event"
       @deleteAvatar="deleteAvatar()"
       :statusAnime="null"

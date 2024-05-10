@@ -94,7 +94,13 @@ onMounted(() => {
       </SvgButton>
       <SvgButton class="cursor-pointer">
         <IconSprite name="icon-settings" />
-        <span class="text-[14px]" @click="router.push('/profile')">Мой Профиль</span>
+        <span
+          class="text-[14px]"
+          @click="
+            router.push(`/profile/${animeStore.user?.id}`)
+          "
+          >Мой Профиль</span
+        >
       </SvgButton>
       <SvgButton class="cursor-pointer">
         <IconSprite name="exit" />
