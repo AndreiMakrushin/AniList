@@ -167,6 +167,7 @@ async function addAnimeToHistory() {
       .single()
     if (videoElement.value && existsAnime) {
       videoElement.value.currentTime = existsAnime.current_Time
+      
       return
     }
   } catch (error) {
@@ -191,13 +192,16 @@ const timeUpdate = () => {
 
 const realTimeUpdate = () => {
   const date = new Date().toLocaleDateString()
+  const normalDate = date.split('.')
+  const dateNormal = `${normalDate[2]}-${normalDate[1]}-${normalDate[0]}`
   const time = new Date().toLocaleTimeString()
 
-  return `${date} ${time}`
+  return `${dateNormal} ${time}`
 }
 
 watch(timer, () => {
   if (props.user === null) return
+  if (timer.value < 1) return 
 
   updateAnimeHistory(
     props.user.id,
