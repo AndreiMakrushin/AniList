@@ -33,6 +33,9 @@ const showInterface = ref<boolean>(false)
 
 watch(props, () => {
   episodeAnime.value = props.episode
+  isPreview.value = false
+  playing.value = false
+  
 })
 
 const seria = computed(() => {

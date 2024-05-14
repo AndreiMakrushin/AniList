@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, watchEffect, defineAsyncComponent } from 'vue'
+import { computed, onMounted, ref, watch, defineAsyncComponent } from 'vue'
 import { API_anime, API_SIMILAR_ANIME } from '@/composables'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
@@ -24,6 +24,7 @@ const loadAnime = async () => {
   console.log(res.data)
   anime.value = res.data
   const genres = Object.values(res.data.genres).join(',')
+
   const similar = await axios.get(`${API_SIMILAR_ANIME}${genres}&limit=10`)
   similarAnime.value = similar.data.list.slice(1)
 }
@@ -88,8 +89,7 @@ const animeLength = computed(() => {
       </div>
       <p>Описание: {{ anime?.description }}</p>
 
-      <div v-if="Player">
-        <Player
+      <Player
         :user="animeStore?.user"
         :AnimePlay="anime?.player"
         :animeName="anime?.names.ru"
@@ -97,7 +97,6 @@ const animeLength = computed(() => {
         :episode="Number(route.params.episode)"
         @updateEpisode="router.push({ name: 'anime', params: { id: anime?.id, episode: $event } })"
       />
-      </div>
     </div>
   </div>
   <!-- раздекомпозировать верстку -->
