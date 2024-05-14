@@ -21,7 +21,7 @@ const props = defineProps<{
   animeId?: number
 }>()
 
-const episodeAnime = ref<number>(1)
+const episodeAnime = ref<number | string>(props.episode || 1)
 const quality = ref<string>('hd')
 const timer = ref<number>(0)
 const fullscreen = ref<boolean>(false)
@@ -32,10 +32,11 @@ const isQualityVideo = ref<boolean>(false)
 const showInterface = ref<boolean>(false)
 
 watch(props, () => {
-  episodeAnime.value = props.episode
+  episodeAnime.value = props.episode || 1
   isPreview.value = false
   playing.value = false
   timer.value = 0
+  
 })
 const previewAnime = computed(() => {
   return props.AnimePlay?.list[episodeAnime.value]?.preview

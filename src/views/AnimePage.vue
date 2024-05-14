@@ -88,7 +88,6 @@ const animeLength = computed(() => {
         <p>Последнее обновление: {{ dataAnime(anime?.updated) }}</p>
       </div>
       <p>Описание: {{ anime?.description }}</p>
-
       <Player
         :user="animeStore?.user"
         :AnimePlay="anime?.player"
