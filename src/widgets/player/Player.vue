@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, defineProps, ref, watch, computed, reactive, onUnmounted } from 'vue'
+import { onMounted, defineProps, ref, watch, computed, onUnmounted } from 'vue'
 import Hls from 'hls.js'
 import SelectEpisode from './widgetsPlayer/SelectEpisode.vue'
 import Preview from './widgetsPlayer/Preview.vue'
@@ -35,11 +35,7 @@ watch(props, () => {
   episodeAnime.value = props.episode
   isPreview.value = false
   playing.value = false
-  
-})
-
-const seria = computed(() => {
-  return 'https://cache.libria.fun' + props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]
+  timer.value = 0
 })
 const previewAnime = computed(() => {
   return props.AnimePlay?.list[episodeAnime.value]?.preview
@@ -47,20 +43,28 @@ const previewAnime = computed(() => {
     : noImg
 })
 
-onMounted(() => {
-  watch([props, episodeAnime, quality], () => {
-    if (!seria.value || !videoElement.value) {
-      return
-    }
-    if (Hls.isSupported()) {
-      const hls = new Hls()
-      hls.loadSource(seria.value)
-      hls.attachMedia(videoElement.value)
-    } else if (videoElement.value?.canPlayType('application/vnd.apple.mpegurl')) {
-      videoElement.value.src = seria.value
-    }
-  })
+const seria = computed(() => {
+  return 'https://cache.libria.fun' + props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]
 })
+
+const loadPlayer = () => {
+  if (!seria.value || !videoElement.value) {
+    return
+  }
+  if (Hls.isSupported()) {
+    const hls = new Hls()
+    hls.loadSource(seria.value)
+    hls.attachMedia(videoElement.value)
+    videoElement.value.currentTime = timer.value
+  } else if (videoElement.value?.canPlayType('application/vnd.apple.mpegurl')) {
+    videoElement.value.src = seria.value
+  }
+}
+
+onMounted(() => {
+  loadPlayer()
+})
+watch([props, episodeAnime, quality], () => loadPlayer())
 
 watch(episodeAnime, () => {
   isPreview.value = false
@@ -170,7 +174,7 @@ async function addAnimeToHistory() {
       .single()
     if (videoElement.value && existsAnime) {
       videoElement.value.currentTime = existsAnime.current_Time
-      
+
       return
     }
   } catch (error) {
@@ -204,7 +208,7 @@ const realTimeUpdate = () => {
 
 watch(timer, () => {
   if (props.user === null) return
-  if (timer.value < 1) return 
+  if (timer.value < 1) return
 
   updateAnimeHistory(
     props.user.id,
@@ -258,7 +262,6 @@ const handleKeyPress = (event: KeyboardEvent) => {
   if (event.code === 'Escape') {
     fullscreen.value = false
     normalScreen()
-    
   }
   if (event.code === 'ArrowUp') {
     fullScreen()
