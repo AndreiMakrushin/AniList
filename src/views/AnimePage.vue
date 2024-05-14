@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import { computed, onMounted, ref, watch, watchEffect, defineAsyncComponent } from 'vue'
 import { API_anime, API_SIMILAR_ANIME } from '@/composables'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import type { Anime } from '@/stores/types'
-import Player from '@/widgets/player/Player.vue'
 import IconSprite from '../shared/IconSprite.vue'
 import { useAnimeStore } from '../stores/animeStore'
 import SkeletonAnimePage from '../shared/ui/skeleton/SkeletonAnimePage.vue'
+
+const Player = defineAsyncComponent(() => import('@/widgets/player/Player.vue'))
 
 const animeStore = useAnimeStore()
 
@@ -87,7 +88,8 @@ const animeLength = computed(() => {
       </div>
       <p>Описание: {{ anime?.description }}</p>
 
-      <Player
+      <div v-if="Player">
+        <Player
         :user="animeStore?.user"
         :AnimePlay="anime?.player"
         :animeName="anime?.names.ru"
@@ -95,6 +97,7 @@ const animeLength = computed(() => {
         :episode="Number(route.params.episode)"
         @updateEpisode="router.push({ name: 'anime', params: { id: anime?.id, episode: $event } })"
       />
+      </div>
     </div>
   </div>
   <!-- раздекомпозировать верстку -->
