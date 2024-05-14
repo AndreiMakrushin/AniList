@@ -19,9 +19,7 @@ onMounted(() => {
       <Header />
       <RegistrationAndAutorisationModal />
       <UploadAvatar />
-      <RouterView />  
-      
+      <RouterView />
     </div>
-    <!-- <Footer /> -->
+  <!-- <Footer /> -->
 </template>
-

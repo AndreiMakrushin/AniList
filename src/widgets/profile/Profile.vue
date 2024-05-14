@@ -58,7 +58,7 @@ onBeforeUnmount(() => {
         @mouseleave="handleAvatarMouseLeave"
       />
       </div>
-      <span class="text-gray-500 font-normal text-[20px]">{{ user?.name }}</span>
+      <span class="text-[#e4e4e4] font-normal text-[20px]">{{ user?.name }}</span>
     </div>
       <ModalMenu
         v-if="buttonAvatarModal"

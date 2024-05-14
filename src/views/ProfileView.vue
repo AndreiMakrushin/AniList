@@ -19,7 +19,7 @@ const getAnime = async () => {
   const { data } = await supabase.from('animeUserList').select().eq('userId', route.params.id)
   aniHistory.value = data
 }
-let timeout;
+let timeout: any;
 const checkAuthorization = async () => {
   if (!animeStore.user || animeStore.user.id.toString() !== route.params.id) {
     timeout = setTimeout(async () => {
@@ -42,7 +42,7 @@ watch(
   }
 )
 
-const reverceAnime = computed(() => {
+const reverceAnime = computed<addAnime>(() => {
   return aniHistory.value
     ?.filter((item: addAnime) => item.updated !== null)
     .sort((a: addAnime, b: addAnime) => new Date(b.updated) - new Date(a.updated))
@@ -60,7 +60,7 @@ onUnmounted(() => {
       @deleteAvatar="deleteAvatar()"
       :statusAnime="null"
     />
-    <div class="flex flex-col gap-5 mt-10">
+    <div class="flex flex-col gap-5 mt-10 w-[80%] sm:w-[60%]">
       <div
         v-for="i in reverceAnime"
         :key="i"
@@ -77,7 +77,9 @@ onUnmounted(() => {
             ></span>
           </div>
           <div class="px-2">
-            <h1 class="text-[20px]">{{ i.nameAnime }}</h1>
+            <h1 class="text-[18px] w-full whitespace-nowrap text-ellipsis overflow-hidden">
+              {{ i.nameAnime }}
+            </h1>
             <h3>Серия: {{ i.episode }}</h3>
           </div>
         </div>
