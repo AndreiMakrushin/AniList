@@ -33,10 +33,7 @@ const showInterface = ref<boolean>(false)
 
 watch(props, () => {
   episodeAnime.value = props.episode || 1
-  isPreview.value = false
-  playing.value = false
-  timer.value = 0
-  
+  resetParameters()
 })
 const previewAnime = computed(() => {
   return props.AnimePlay?.list[episodeAnime.value]?.preview
@@ -62,14 +59,18 @@ const loadPlayer = () => {
   }
 }
 
+function resetParameters() {
+  isPreview.value = false
+  playing.value = false
+  timer.value = 0
+}
+
 onMounted(() => {
   loadPlayer()
 })
 watch([props, episodeAnime, quality], () => loadPlayer())
 
-watch(episodeAnime, () => {
-  isPreview.value = false
-})
+
 const emit = defineEmits(['updateEpisode'])
 
 const updateEpisode = (event: string) => {
@@ -125,6 +126,7 @@ watch(timer, () => {
   if (!videoElement.value) return
   if (timer.value === Math.floor(videoElement.value?.duration)) {
     episodeAnime.value++
+    resetParameters()
   }
 })
 const nextEpisode = () => {
@@ -132,10 +134,12 @@ const nextEpisode = () => {
     episodeAnime.value = 0
   }
   episodeAnime.value++
+  resetParameters()
 }
 const prevEpisode = () => {
   if (episodeAnime.value === 1) return
   episodeAnime.value--
+  resetParameters()
 }
 const fullScreen = () => {
   if (!videoElement.value) return
