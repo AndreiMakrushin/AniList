@@ -25,22 +25,34 @@ const onReving = (event: number) => {
   if (!props.videoDurationTime || !props.videoCurrentTime) return
   emit('rewind', (props.videoDurationTime * event) / 1000)
 }
+
+const ranges = computed({
+  get: () => {
+    if (!props.videoDurationTime || !props.videoCurrentTime) {
+      return 0
+    } else {
+      return (props.videoCurrentTime / props.videoDurationTime) * 1000
+    }
+  },
+  set: (value: number) => {
+    onReving(value)
+  }
+})
 </script>
 
 <template>
-  <div class="relative h-[5px] duration-short bg-[#525151] rounded-[5px]">
+  <div class="relative h-[5px] duration-short bg-[#525151] rounded-[5px] mb-5">
     <div
       class="absolute z-10 h-full duration-short bg-slate-500 rounded-[5px] cursor-pointer justify-end items-center"
       :style="progress"
     ></div>
     <input
       type="range"
-      class="w-full absolute z-20 h-full" 
+      class="w-full absolute z-20 h-full"
       step="1"
       min="0"
       max="1000"
-      :value="value"
-      @input="onReving($event.target.value)"
+      v-model="ranges"
     />
   </div>
 </template>
@@ -67,6 +79,4 @@ input[type='range']::-webkit-slider-thumb {
     height 0.5s,
     width 0.5s;
 }
-
-
 </style>

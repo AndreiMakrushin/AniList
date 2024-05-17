@@ -70,7 +70,6 @@ onMounted(() => {
 })
 watch([props, episodeAnime, quality], () => loadPlayer())
 
-
 const emit = defineEmits(['updateEpisode'])
 
 const updateEpisode = (event: string) => {
@@ -150,8 +149,8 @@ const fullScreen = () => {
     .then(() => {
       fullscreen.value = true
     })
-    .catch((err) => {
-      console.log(err)
+    .catch((err: any) => {
+      return
     })
 }
 const normalScreen = () => {
@@ -160,6 +159,7 @@ const normalScreen = () => {
   document.exitFullscreen()
   fullscreen.value = false
 }
+
 const openSelectQuality = () => {
   isQualityVideo.value = !isQualityVideo.value
 }
@@ -247,42 +247,39 @@ const transitionInterfaceShow = computed(() => {
 const rewindTheVideo = (e: number) => {
   if (videoElement.value) {
     videoElement.value.currentTime = e
+    timer.value = e
   }
 }
 const handleKeyPress = (event: KeyboardEvent) => {
   if (event.code === 'Space' && playing.value) {
     videoPaused()
-  } else {
-    if (event.code === 'Space' && !playing.value) {
-      playVideo()
-      showInterface.value = false
-    }
-  }
-  if (event.code === 'ArrowRight' && videoElement.value) {
+  } else if (event.code === 'Space' && !playing.value) {
+    playVideo()
+    showInterface.value = false
+  } else if (event.code === 'ArrowRight' && videoElement.value) {
     videoElement.value.currentTime += 5
-  }
-  if (event.code === 'ArrowLeft' && videoElement.value) {
+  } else if (event.code === 'ArrowLeft' && videoElement.value) {
     videoElement.value.currentTime -= 5
-  }
-  if (event.code === 'Escape') {
-    fullscreen.value = false
-    normalScreen()
-  }
-  if (event.code === 'ArrowUp') {
+  } else if (event.code === 'ArrowUp') {
     fullScreen()
     fullscreen.value = true
-  }
-  if (event.code === 'ArrowDown') {
+  } else if (event.code === 'ArrowDown') {
     normalScreen()
     fullscreen.value = false
   }
 }
+const fullscreenChange = () => {
+  if (document.fullscreenElement) return
+  fullscreen.value = false
+}
 
 onMounted(() => {
   document.addEventListener('keydown', handleKeyPress)
+  document.addEventListener('fullscreenchange', fullscreenChange)
 })
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeyPress)
+  document.removeEventListener('fullscreenchange', fullscreenChange)
 })
 </script>
 
