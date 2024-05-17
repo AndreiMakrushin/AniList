@@ -6,13 +6,14 @@ import Header from './widgets/header/Header.vue'
 import RegistrationAndAutorisationModal from './widgets/modals/regAuth/RegistrationAndAutorisationModal.vue'
 import UploadAvatar from './widgets/modals/uploadAvatar/UploadAvatar.vue'
 import IconSprite from './shared/IconSprite.vue'
-import Footer from './widgets/footer/Footer.vue'
+import { upScroll } from '@/features/upScroll/upScroll'
 
 const animeStore = useAnimeStore()
 
 onMounted(() => {
   animeStore.getUser()
 })
+
 </script>
 
 <template>
@@ -22,7 +23,7 @@ onMounted(() => {
     <UploadAvatar />
     <RouterView />
   </div>
-  <div class="fixed bottom-1 right-1 text-white cursor-pointer">
+  <div class="fixed bottom-1 right-1 text-white cursor-pointer" @click="upScroll()">
     <IconSprite :width="70" :height="70" name="icon-arrow-up" />
   </div>
   <!-- <Footer /> -->

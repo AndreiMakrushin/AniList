@@ -120,14 +120,6 @@ const videoDuration = computed(() => {
   const time = Math.floor(videoElement.value?.duration)
   return videoTimer(time)
 })
-
-watch(timer, () => {
-  if (!videoElement.value) return
-  if (timer.value === Math.floor(videoElement.value?.duration)) {
-    episodeAnime.value++
-    resetParameters()
-  }
-})
 const nextEpisode = () => {
   if (episodeAnime.value === Object.keys(props.AnimePlay?.list).length) {
     episodeAnime.value = 0
