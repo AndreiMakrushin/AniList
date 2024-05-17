@@ -15,12 +15,6 @@ const progress = computed(() => {
     width: `${(props.videoCurrentTime / props.videoDurationTime) * 100}%`
   }
 })
-
-const value = computed(() => {
-  if (!props.videoDurationTime || !props.videoCurrentTime) return 0
-  return (props.videoCurrentTime / props.videoDurationTime) * 1000
-})
-
 const onReving = (event: number) => {
   if (!props.videoDurationTime || !props.videoCurrentTime) return
   emit('rewind', (props.videoDurationTime * event) / 1000)
@@ -41,7 +35,7 @@ const ranges = computed({
 </script>
 
 <template>
-  <div class="relative h-[5px] duration-short bg-[#525151] rounded-[5px] mb-5">
+  <div class="relative h-[5px] duration-short bg-[#525151] rounded-[5px]">
     <div
       class="absolute z-10 h-full duration-short bg-slate-500 rounded-[5px] cursor-pointer justify-end items-center"
       :style="progress"
