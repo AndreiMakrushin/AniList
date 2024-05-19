@@ -14,6 +14,13 @@ export interface addAnime {
   img: string | undefined;
   episode: number | undefined;
 }
+export interface AnimeStatus{
+  animeId: number;
+  userId: number;
+  nameAnime: string;
+  img: string;
+  status: string;
+}
 
 export interface Credentials {
     name: string

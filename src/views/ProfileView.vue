@@ -3,7 +3,7 @@ import { useAnimeStore } from '@/stores/animeStore'
 import Profile from '@/widgets/profile/Profile.vue'
 import { supabase } from '@/supabase'
 import { computed, onMounted, onUnmounted, onUpdated, ref, watch } from 'vue'
-import type { addAnime, User } from '@/stores/types'
+import type { addAnime, AnimeStatus } from '@/stores/types'
 import { useRouter, useRoute } from 'vue-router'
 import noimg from '@/assets/img/noimg.jpeg'
 
@@ -12,6 +12,7 @@ const route = useRoute()
 const animeStore = useAnimeStore()
 
 const aniHistory = ref<addAnime>(null)
+const animeStatus = ref<AnimeStatus>(null)
 const deleteAvatar = async () => {
   await supabase.from('users').update({ avatar_url: null }).match({ id: route.params.id })
 }
@@ -19,7 +20,11 @@ const getAnime = async () => {
   const { data } = await supabase.from('animeUserList').select().eq('userId', route.params.id)
   aniHistory.value = data
 }
-let timeout: any;
+const getStatusesAnime = async () => {
+  const { data } = await supabase.from('animeStatusList').select().eq('userId', route.params.id)
+  animeStatus.value = data
+}
+let timeout: any
 const checkAuthorization = async () => {
   if (!animeStore.user || animeStore.user.id.toString() !== route.params.id) {
     timeout = setTimeout(async () => {
@@ -28,6 +33,7 @@ const checkAuthorization = async () => {
     return
   }
   await getAnime()
+  await getStatusesAnime()
 }
 
 onMounted(async () => {
@@ -47,6 +53,16 @@ const reverceAnime = computed<addAnime>(() => {
     ?.filter((item: addAnime) => item.updated !== null)
     .sort((a: addAnime, b: addAnime) => new Date(b.updated) - new Date(a.updated))
 })
+
+const statusAnime = computed<AnimeStatus>(() => {
+  if (!animeStatus.value) return
+  return animeStatus.value.reduce((acc, obj) => {
+    if (acc[obj.status]) {
+      return Object.assign(acc, { [obj.status]: acc[obj.status] + 1 })
+    }
+    return Object.assign(acc, { [obj.status]: 1 })
+  }, {})
+})
 onUnmounted(() => {
   animeStore.animeEpisode = 1
 })
@@ -64,12 +80,12 @@ onUnmounted(() => {
       <div>
         <ol class="flex flex-row gap-3 text-white flex-wrap text-[18px]">
           <li>История - {{ reverceAnime?.length }}</li>
-          <li>Смотрю - {{ reverceAnime?.length }}</li>
-          <li>Просмотрено - {{ reverceAnime?.length }}</li>
-          <li>Запланировано - {{ reverceAnime?.length }}</li>
-          <li>Пересматриваю - {{ reverceAnime?.length }}</li>
-          <li>Выходит - {{ reverceAnime?.length }}</li>
-          <li>Заброшено - {{ reverceAnime?.length }}</li>
+          <li>Смотрю - {{ statusAnime['Смотрю'] || 0}}</li>
+          <li>Просмотрено - {{ statusAnime['Просмотрено'] || 0}}</li>
+          <li>Запланировано - {{ statusAnime['Запланировано'] || 0}}</li>
+          <li>Пересматриваю - {{ statusAnime['Пересматриваю'] || 0}}</li>
+          <li>Выходит - {{ statusAnime['Выходит'] || 0}}</li>
+          <li>Заброшено - {{ statusAnime['Заброшено'] || 0 }}</li>
         </ol>
       </div>
       <div
