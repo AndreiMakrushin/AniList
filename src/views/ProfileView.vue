@@ -55,8 +55,8 @@ const reverceAnime = computed<addAnime>(() => {
 })
 
 const statusAnime = computed<AnimeStatus>(() => {
-  if (!animeStatus.value) return
-  return animeStatus.value.reduce((acc, obj) => {
+  if (!animeStatus.value || !animeStatus.value.length) return {}
+  return animeStatus.value.reduce((acc: AnimeStatus, obj: AnimeStatus) => {
     if (acc[obj.status]) {
       return Object.assign(acc, { [obj.status]: acc[obj.status] + 1 })
     }
