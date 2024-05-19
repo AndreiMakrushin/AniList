@@ -97,7 +97,7 @@ onMounted(() => {
         <span
           class="text-[14px]"
           @click="
-            router.push(`/profile/${animeStore.user?.id}`)
+            router.push(`/lk/${animeStore.user?.id}`)
           "
           >Мой Профиль</span
         >

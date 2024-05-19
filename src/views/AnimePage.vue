@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, defineAsyncComponent } from 'vue'
+import { computed, onMounted, ref, watch, defineAsyncComponent, reactive } from 'vue'
 import { API_anime, API_SIMILAR_ANIME } from '@/composables'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
@@ -8,6 +8,7 @@ import { useAnimeStore } from '../stores/animeStore'
 import SkeletonAnimePage from '../shared/ui/skeleton/SkeletonAnimePage.vue'
 import CardsCatalog from '../widgets/catalog/widgetsCatalog/CardsCatalog.vue'
 import Card from '../widgets/catalog/widgetsCatalog/Card.vue'
+import DropDown from './../shared/ui/DropDown.vue'
 
 const Player = defineAsyncComponent(() => import('@/widgets/player/Player.vue'))
 
@@ -26,7 +27,7 @@ const loadAnime = async () => {
   anime.value = res.data
   const genres = Object.values(res.data.genres).join(',')
 
-  const similar = await axios.get(`${API_SIMILAR_ANIME}${genres}&limit=10`)
+  const similar = await axios.get(`${API_SIMILAR_ANIME}${genres}&limit=20`)
   similarAnime.value = similar.data.list.slice(1)
 }
 
@@ -48,17 +49,30 @@ const dataAnime = (data: number) => {
 const animeLength = computed(() => {
   return anime.value ? Object.keys(anime.value?.player?.list).length : 0
 })
+
+const statuses = reactive([
+  'Просмотрено',
+  'Смотрю',
+  'Запланировано',
+  'Пересматриваю',
+  'Выходит',
+  'Заброшено'
+])
+const sendStatus = (status: string) => {
+  console.log(status)
+}
 </script>
 
 <template>
   <SkeletonAnimePage v-if="!anime" />
   <div v-show="anime" class="w-[100%] flex flex-row gap-0 md:gap-5 p-3 text-white text-[20px]">
-    <div class="max-w-[300px] h-full rounded-[10px] overflow-hidden">
+    <div class="max-w-[300px] h-full flex flex-col gap-5">
       <img
-        class="hidden md:block"
+        class="hidden md:block rounded-[10px]"
         :src="anime ? `https://dl-20211030-963.anilib.top${anime?.posters.original.url}` : ''"
         alt=""
       />
+      <DropDown v-if="animeStore?.user" :status="statuses" @sendStatus="sendStatus($event)" />
     </div>
     <div class="w-[100%] flex flex-col gap-5 p-[10px] mb-2">
       <div>
@@ -91,6 +105,8 @@ const animeLength = computed(() => {
       <p>Описание: {{ anime?.description }}</p>
       <Player
         :user="animeStore?.user"
+        :previewUrl="'https://dl-20211030-963.anilib.top'"
+        :seriaUrl="'https://cache.libria.fun'"
         :AnimePlay="anime?.player"
         :animeName="anime?.names.ru"
         :animeId="anime?.id"
@@ -99,7 +115,6 @@ const animeLength = computed(() => {
       />
     </div>
   </div>
-  <!-- раздекомпозировать верстку -->
   <span class="text-[20px] text-white text-center font-medium">Похожие Аниме</span>
   <CardsCatalog>
     <Card

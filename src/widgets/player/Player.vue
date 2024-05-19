@@ -19,6 +19,8 @@ const props = defineProps<{
   AnimePlay?: Anime
   animeName?: string
   animeId?: number
+  previewUrl?: string
+  seriaUrl?: string
 }>()
 
 const episodeAnime = ref<number | string>(props.episode || 1)
@@ -31,18 +33,21 @@ const playing = ref<boolean>(false)
 const isQualityVideo = ref<boolean>(false)
 const showInterface = ref<boolean>(false)
 
-watch(props, () => {
-  episodeAnime.value = props.episode || 1
-  resetParameters()
-})
+watch(
+  () => props.episode,
+  (newEpisode: number | string) => {
+    episodeAnime.value = newEpisode || 1
+    resetParameters()
+  }
+)
 const previewAnime = computed(() => {
   return props.AnimePlay?.list[episodeAnime.value]?.preview
-    ? 'https://dl-20211030-963.anilib.top' + props.AnimePlay?.list[episodeAnime.value]?.preview
+    ? `${props.previewUrl}${props.AnimePlay?.list[episodeAnime.value]?.preview}`
     : noImg
 })
 
 const seria = computed(() => {
-  return 'https://cache.libria.fun' + props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]
+  return `${props.seriaUrl}${props.AnimePlay?.list[episodeAnime.value]?.hls[quality.value]}`
 })
 
 const loadPlayer = () => {
@@ -158,6 +163,7 @@ const openSelectQuality = () => {
 const updateQuality = (event: string) => {
   quality.value = event
   isQualityVideo.value = false
+  videoPaused()
 }
 async function addAnimeToHistory() {
   if (props.user === null) return

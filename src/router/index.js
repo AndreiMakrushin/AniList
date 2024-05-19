@@ -23,8 +23,8 @@ const router = createRouter({
             component: NoFound
         },
         {
-            path: '/profile/:id',
-            name: 'profile',
+            path: '/lk/:id',
+            name: 'lk',
             component: ProfileView
         }
 

@@ -3,7 +3,7 @@ import { supabase } from '@/supabase'
 export const updateAnimeHistory = async (
   userId: number,
   animeId: number | undefined,
-  episode: number,
+  episode: number | string,
   timer: number,
   realTimeUpdate: string
 ) => {

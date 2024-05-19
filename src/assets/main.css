@@ -17,4 +17,5 @@ body {
 
 * {
     font-family: 'Anime Ace Italic';
+    user-select: none;
 }

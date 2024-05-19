@@ -61,6 +61,17 @@ onUnmounted(() => {
       :statusAnime="null"
     />
     <div class="flex flex-col gap-5 mt-10 w-[80%] sm:w-[60%]">
+      <div>
+        <ol class="flex flex-row gap-3 text-white flex-wrap text-[18px]">
+          <li>История - {{ reverceAnime?.length }}</li>
+          <li>Смотрю - {{ reverceAnime?.length }}</li>
+          <li>Просмотрено - {{ reverceAnime?.length }}</li>
+          <li>Запланировано - {{ reverceAnime?.length }}</li>
+          <li>Пересматриваю - {{ reverceAnime?.length }}</li>
+          <li>Выходит - {{ reverceAnime?.length }}</li>
+          <li>Заброшено - {{ reverceAnime?.length }}</li>
+        </ol>
+      </div>
       <div
         v-for="i in reverceAnime"
         :key="i"
