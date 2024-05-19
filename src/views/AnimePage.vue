@@ -9,6 +9,8 @@ import SkeletonAnimePage from '../shared/ui/skeleton/SkeletonAnimePage.vue'
 import CardsCatalog from '../widgets/catalog/widgetsCatalog/CardsCatalog.vue'
 import Card from '../widgets/catalog/widgetsCatalog/Card.vue'
 import DropDown from './../shared/ui/DropDown.vue'
+import { addStatusAnime } from '../features/addStatusAnime/addStatusAnime'
+import { supabase } from '../supabase'
 
 const Player = defineAsyncComponent(() => import('@/widgets/player/Player.vue'))
 
@@ -58,8 +60,28 @@ const statuses = reactive([
   'Выходит',
   'Заброшено'
 ])
-const sendStatus = (status: string) => {
-  console.log(status)
+const sendStatus = async (status: string) => {
+  const { data } = await supabase
+    .from('animeStatusList')
+    .select()
+    .filter('animeId', 'eq', anime.value?.id)
+    .filter('userId', 'eq', animeStore.user?.id)
+    .single()
+
+  if (data) {
+    console.log('уже есть')
+    return
+  }
+
+  const animeStatus = {
+    animeId: anime.value?.id,
+    userId: animeStore.user?.id,
+    nameAnime: anime.value?.names.ru,
+    img: anime.value?.posters.original.url,
+    status: status
+  }
+
+  addStatusAnime(animeStatus)
 }
 </script>
 
