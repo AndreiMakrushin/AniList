@@ -55,12 +55,14 @@ const reverceAnime = computed<addAnime>(() => {
 })
 
 const statusAnime = computed<AnimeStatus>(() => {
-  if (!animeStatus.value || !animeStatus.value.length) return {}
+  if (!animeStatus.value?.length) {
+    return {}
+  }
   return animeStatus.value.reduce((acc: AnimeStatus, obj: AnimeStatus) => {
     if (acc[obj.status]) {
-      return Object.assign(acc, { [obj.status]: acc[obj.status] + 1 })
+      return { ...acc, [obj.status]: acc[obj.status] + 1 }
     }
-    return Object.assign(acc, { [obj.status]: 1 })
+    return { ...acc, [obj.status]: 1 }
   }, {})
 })
 onUnmounted(() => {
@@ -80,11 +82,11 @@ onUnmounted(() => {
       <div v-if="animeStore?.user">
         <ol class="flex flex-row gap-3 text-white flex-wrap text-[18px]">
           <li>История - {{ reverceAnime?.length }}</li>
-          <li>Смотрю - {{ statusAnime['Смотрю'] || 0}}</li>
-          <li>Просмотрено - {{ statusAnime['Просмотрено'] || 0}}</li>
-          <li>Запланировано - {{ statusAnime['Запланировано'] || 0}}</li>
-          <li>Пересматриваю - {{ statusAnime['Пересматриваю'] || 0}}</li>
-          <li>Выходит - {{ statusAnime['Выходит'] || 0}}</li>
+          <li>Смотрю - {{ statusAnime['Смотрю'] || 0 }}</li>
+          <li>Просмотрено - {{ statusAnime['Просмотрено'] || 0 }}</li>
+          <li>Запланировано - {{ statusAnime['Запланировано'] || 0 }}</li>
+          <li>Пересматриваю - {{ statusAnime['Пересматриваю'] || 0 }}</li>
+          <li>Выходит - {{ statusAnime['Выходит'] || 0 }}</li>
           <li>Заброшено - {{ statusAnime['Заброшено'] || 0 }}</li>
         </ol>
       </div>
@@ -114,6 +116,3 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped></style>
-/* @click="router.push(`/anime/${i.animeId}`), (animeStore.animeEpisode = i.episode)" */
