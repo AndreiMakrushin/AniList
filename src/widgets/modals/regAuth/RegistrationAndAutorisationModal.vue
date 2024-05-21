@@ -32,7 +32,7 @@ const switcher = computed(() => {
 <template>
   <teleport to="body">
     <div
-      class="absolute top-0 left-0 w-full h-full flex items-center justify-center"
+      class="fixed top-0 left-0 w-full h-full flex items-center justify-center"
       v-if="animeStore.authRegModal"
     >
       <div class="absolute bg-black opacity-50 inset-0"></div>

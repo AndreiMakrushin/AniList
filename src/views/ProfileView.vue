@@ -2,10 +2,11 @@
 import { useAnimeStore } from '@/stores/animeStore'
 import Profile from '@/widgets/profile/Profile.vue'
 import { supabase } from '@/supabase'
-import { computed, onMounted, onUnmounted, onUpdated, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import type { addAnime, AnimeStatus } from '@/stores/types'
 import { useRouter, useRoute } from 'vue-router'
 import noimg from '@/assets/img/noimg.jpeg'
+import Swiper from '@/shared/ui/Swiper.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -54,6 +55,15 @@ const reverceAnime = computed<addAnime>(() => {
     .sort((a: addAnime, b: addAnime) => new Date(b.updated) - new Date(a.updated))
 })
 
+const labelStatus = [
+  'Смотрю',
+  'Просмотрено',
+  'Запланировано',
+  'Пересматриваю',
+  'Выходит',
+  'Заброшено'
+]
+
 const statusAnime = computed<AnimeStatus>(() => {
   if (!animeStatus.value?.length) {
     return {}
@@ -64,9 +74,6 @@ const statusAnime = computed<AnimeStatus>(() => {
     }
     return { ...acc, [obj.status]: 1 }
   }, {})
-})
-onUnmounted(() => {
-  animeStore.animeEpisode = 1
 })
 </script>
 
@@ -82,37 +89,17 @@ onUnmounted(() => {
       <div v-if="animeStore?.user">
         <ol class="flex flex-row gap-3 text-white flex-wrap text-[18px]">
           <li>История - {{ reverceAnime?.length }}</li>
-          <li>Смотрю - {{ statusAnime['Смотрю'] || 0 }}</li>
-          <li>Просмотрено - {{ statusAnime['Просмотрено'] || 0 }}</li>
-          <li>Запланировано - {{ statusAnime['Запланировано'] || 0 }}</li>
-          <li>Пересматриваю - {{ statusAnime['Пересматриваю'] || 0 }}</li>
-          <li>Выходит - {{ statusAnime['Выходит'] || 0 }}</li>
-          <li>Заброшено - {{ statusAnime['Заброшено'] || 0 }}</li>
+          <li v-for="item in labelStatus" :key="item">{{ item }} - {{ statusAnime[item] || 0 }}</li>
         </ol>
       </div>
-      <div
-        v-for="i in reverceAnime"
-        :key="i"
-        class="relative cursor-pointer flex gap-5 rounded-[10px] overflow-hidden"
-        @click="router.push({ name: 'anime', params: { id: i.animeId, episode: i.episode } })"
-      >
-        <img :src="i.img === null ? noimg : i.img" alt="" class="w-[100%]" />
-        <div class="absolute bottom-0 left-0 flex flex-col bg-white w-[100%]">
-          <div class="relative flex">
-            <span class="w-full flex h-[5px] bg-slate-300"></span>
-            <span
-              class="h-[5px] bg-red-500 absolute top-0 left-0"
-              :style="`width: ${(i.current_Time / i.duration_Time) * 100}%`"
-            ></span>
-          </div>
-          <div class="px-2">
-            <h1 class="text-[18px] w-full whitespace-nowrap text-ellipsis overflow-hidden">
-              {{ i.nameAnime }}
-            </h1>
-            <h3>Серия: {{ i.episode }}</h3>
-          </div>
-        </div>
-      </div>
+      <Swiper
+        :history="reverceAnime"
+        :labelStatus="labelStatus"
+        :list="animeStatus"
+        @pushing="
+          router.push({ name: 'anime', params: { id: $event.id, episode: $event.episode } })
+        "
+      />
     </div>
   </div>
 </template>

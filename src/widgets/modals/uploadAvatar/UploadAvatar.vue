@@ -61,7 +61,7 @@ const avatarButtonStatus = computed(() => {
 
 <template>
   <Teleport to="body">
-    <div class="absolute z-50 top-0 w-[100%] h-[100%]" v-if="animeStore.modal">
+    <div class="fixed z-50 top-0 w-[100%] h-[100%]" v-if="animeStore.modal">
       <div class="w-[100%] h-[100%] bg-black opacity-[0.5]" @click="animeStore.modal = false"></div>
       <div class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
         <div class="flex flex-col items-center bg-white rounded-[10px]">
