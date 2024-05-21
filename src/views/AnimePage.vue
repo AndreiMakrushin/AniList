@@ -94,9 +94,14 @@ const sendStatus = async (status: string) => {
         :src="anime ? `https://dl-20211030-963.anilib.top${anime?.posters.original.url}` : ''"
         alt=""
       />
-      <DropDown v-if="animeStore?.user" :status="statuses" @sendStatus="sendStatus($event)" />
+      <DropDown
+        class="hidden md:block"
+        v-if="animeStore?.user"
+        :status="statuses"
+        @sendStatus="sendStatus($event)"
+      />
     </div>
-    <div class="w-[100%] flex flex-col gap-5 p-[10px] mb-2">
+    <div class="w-[100%] h-full flex flex-col gap-5 p-[10px] mb-2">
       <div>
         <h1 class="text-[30px]">{{ anime?.names.ru }}</h1>
         <p>{{ anime?.names.en }}</p>
@@ -135,8 +140,15 @@ const sendStatus = async (status: string) => {
         :episode="Number(route.params.episode)"
         @updateEpisode="router.push({ name: 'anime', params: { id: anime?.id, episode: $event } })"
       />
+      <DropDown
+        class="max-md:block hidden mt-2"
+        v-if="animeStore?.user"
+        :status="statuses"
+        @sendStatus="sendStatus($event)"
+      />
     </div>
   </div>
+
   <span class="text-[20px] text-white text-center font-medium">Похожие Аниме</span>
   <CardsCatalog>
     <Card
