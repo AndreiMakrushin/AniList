@@ -13,7 +13,6 @@ const animeStore = useAnimeStore()
 onMounted(() => {
   animeStore.getUser()
 })
-
 </script>
 
 <template>
@@ -23,7 +22,7 @@ onMounted(() => {
     <UploadAvatar />
     <RouterView />
   </div>
-  <div class="fixed bottom-1 right-1 text-white cursor-pointer" @click="upScroll()">
+  <div class="fixed z-50 bottom-1 right-1 text-white cursor-pointer" @click="upScroll()">
     <IconSprite :width="70" :height="70" name="icon-arrow-up" />
   </div>
   <!-- <Footer /> -->

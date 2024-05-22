@@ -2,6 +2,7 @@
 import { defineProps } from 'vue'
 import noimg from '@/assets/img/noimg.jpeg'
 import type { addAnime, AnimeStatus } from '@/stores/types'
+import notHere from '@/assets/img/notHere.jpeg'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 
@@ -24,7 +25,7 @@ const filterList = (key: string) => {
 <template>
   <Swiper
     :slides-per-view="1"
-    :space-between="0"
+    :spaceBetween="70"
     :pagination="{ clickable: true }"
     :grab-cursor="true"
     :autoHeight="true"
@@ -60,7 +61,7 @@ const filterList = (key: string) => {
       </div></SwiperSlide
     >
     <SwiperSlide
-      class="text-white text-[18px] flex gap-5 cursor-pointer"
+      class="text-white min-h-[50vh] text-[18px] flex gap-5 cursor-pointer"
       v-for="status in props.labelStatus"
       :key="status"
     >
@@ -80,7 +81,7 @@ const filterList = (key: string) => {
           </div>
         </div>
         <div v-else class="flex justify-center items-center w-full h-full">
-          <img src="https://dreamerscast.com/img/chibi.webp" alt="" />
+          <img :src="notHere" alt="" class="rounded-[10px]" />
         </div>
       </div>
     </SwiperSlide>

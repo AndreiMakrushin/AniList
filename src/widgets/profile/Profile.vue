@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from 'vue'
+import { ref, onBeforeUnmount, defineEmits } from 'vue'
 import Avatar from '@/shared/ui/Avatar.vue'
 import Button from '@/shared/ui/Button.vue'
 import ModalMenu from '@/widgets/modals/popupButtonAvatar/ModalMenu.vue'

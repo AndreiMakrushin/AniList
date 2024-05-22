@@ -88,7 +88,7 @@ const statusAnime = computed<AnimeStatus>(() => {
     <div class="flex flex-col gap-5 mt-10 w-[80%] sm:w-[60%]">
       <div v-if="animeStore?.user">
         <ol class="flex flex-row gap-3 text-white flex-wrap text-[18px]">
-          <li>История - {{ reverceAnime?.length }}</li>
+          <!-- <li>История - {{ reverceAnime?.length }}</li> -->
           <li v-for="item in labelStatus" :key="item">{{ item }} - {{ statusAnime[item] || 0 }}</li>
         </ol>
       </div>
