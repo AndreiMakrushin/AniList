@@ -12,7 +12,8 @@ module.exports = {
                 'short': '0.3s'
             },
             backgroundColor: {
-                'cardOpacity': 'rgba(0, 0, 0, 0.5)'
+                'cardOpacity': 'rgba(0, 0, 0, 0.5)',
+                'cardOpacity2': 'rgba(0, 0, 0, 0.3)'
             }
 
         },

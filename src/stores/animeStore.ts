@@ -8,7 +8,6 @@ export const useAnimeStore = defineStore('animestore', () => {
   const modal = ref<boolean>(false)
   const authRegModal = ref<boolean>(false)
   const aniList = ref<Anime[]>([])
-  const searchedAnime = ref<Anime[]>([])
   const animeCount = ref<number>(20)
   const animePage = ref<number>(1)
 
@@ -119,5 +118,5 @@ export const useAnimeStore = defineStore('animestore', () => {
   }
 
 
-  return { login, registerUser, user, getUser, logout, recoverPassword, modal, authRegModal, aniList, animeCount,  animePage, searchedAnime }
+  return { login, registerUser, user, getUser, logout, recoverPassword, modal, authRegModal, aniList, animeCount,  animePage }
 })

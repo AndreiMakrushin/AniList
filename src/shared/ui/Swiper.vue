@@ -71,7 +71,7 @@ const filterList = (key: string) => {
             <div class="flex flex-row justify-between w-full gap-2 overflow-hidden">
               <img :src="i.img" class="max-w-[100px] rounded-[10px]" />
               <div class="flex flex-col w-full justify-between gap-5">
-                <span class="max-w-[200px] whitespace-nowrap text-ellipsis overflow-hidden">{{
+                <span class=" whitespace-nowrap text-ellipsis overflow-hidden">{{
                   i.nameAnime
                 }}</span>
                 <span>{{ i.status }}</span>

@@ -40,7 +40,7 @@ const getAnimeFromApi = async () => {
   <div>
     <AnimeList
       :user="animeStore?.user?.id"
-      :anime="animeStore.searchedAnime.length ? animeStore.searchedAnime : animeStore.aniList"
+      :anime="animeStore.aniList"
       @getAnimeFromApi="getAnimeFromApi"
       @page="animeStore.animePage++"
     />

@@ -4,6 +4,7 @@ import { API_search } from '@/composables'
 import axios from 'axios'
 import { RouterLink, useRouter } from 'vue-router'
 import { useAnimeStore } from '@/stores/animeStore'
+import type { Anime } from '@/stores/types'
 import ModalMenu from '@/widgets/modals/popupButtonAvatar/ModalMenu.vue'
 import SvgButton from '@/widgets/modals/popupButtonAvatar/SvgButton.vue'
 import IconSprite from '@/shared/IconSprite.vue'
@@ -11,6 +12,7 @@ import Avatar from '@/shared/ui/Avatar.vue'
 import Search from '@/shared/ui/Search.vue'
 import Switch from '../../shared/ui/Switch.vue'
 import Button from '@/shared/ui/Button.vue'
+import AnimeOnDemand from './anime-on-demand/AnimeOnDemand.vue'
 
 const router = useRouter()
 const animeStore = useAnimeStore()
@@ -18,17 +20,18 @@ const animeStore = useAnimeStore()
 const modalMenu = ref<boolean>(false)
 const mobie = ref<boolean>(false)
 const searchAnime = ref<string>('')
+const arrayAnime = ref<Anime>(null)
 
 const animeSearch = async () => {
   const responce = await axios.get(`${API_search}${searchAnime.value}`)
-  return (animeStore.searchedAnime = responce.data.list)
+  return (arrayAnime.value = responce.data.list)
 }
 
 watch(searchAnime, async () => {
-  if (searchAnime.value !== '') {
+  if (searchAnime.value.length > 3) {
     animeSearch()
-  } else {
-    animeStore.searchedAnime = []
+  }else{
+    arrayAnime.value = null
   }
 })
 const mobileScreen = () => {
@@ -41,6 +44,10 @@ onresize = () => {
 onMounted(() => {
   mobileScreen()
 })
+const pushAnime = (id: number) => {
+  router.push({ name: 'anime', params: { id: id, episode: '1' } })
+  searchAnime.value = ''
+}
 </script>
 
 <template>
@@ -53,13 +60,14 @@ onMounted(() => {
             @click="router.push('/')"
             >AniList</span
           >
-          <div v-if="!mobie" class="flex flex-row grow gap-5">
+          <div v-if="!mobie" class="relative flex flex-row grow gap-5">
             <Search
               type="text"
               :class="'focus:ring-cyan-300 bg-[#d8d8d8]'"
               v-model="searchAnime"
               :modelValue="searchAnime"
             />
+            <AnimeOnDemand @pushing="pushAnime($event)" :arrayAnime="arrayAnime" v-if="arrayAnime"/>
           </div>
         </div>
         <main class="flex flex-row items-center gap-5">
@@ -78,13 +86,14 @@ onMounted(() => {
           />
         </main>
       </div>
-      <div v-if="mobie" class="flex flex-row grow gap-5 px-[16px] h-[30px]">
+      <div v-if="mobie" class="relative flex flex-row grow gap-5 px-[16px] h-[30px]">
         <Search
           type="text"
           :class="'focus:ring-cyan-300 bg-[#d8d8d8]'"
           v-model="searchAnime"
           :modelValue="searchAnime"
         />
+        <AnimeOnDemand @pushing="pushAnime($event)" :arrayAnime="arrayAnime" v-if="arrayAnime"/>
       </div>
     </div>
     <ModalMenu v-if="modalMenu" @click="modalMenu = false" :style="'right-[20px] top-[100%]'">
@@ -94,11 +103,7 @@ onMounted(() => {
       </SvgButton>
       <SvgButton class="cursor-pointer">
         <IconSprite name="icon-settings" />
-        <span
-          class="text-[14px]"
-          @click="
-            router.push(`/lk/${animeStore.user?.id}`)
-          "
+        <span class="text-[14px]" @click="router.push(`/lk/${animeStore.user?.id}`)"
           >Мой Профиль</span
         >
       </SvgButton>
