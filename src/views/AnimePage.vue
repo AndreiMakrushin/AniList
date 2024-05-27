@@ -28,7 +28,6 @@ const loadAnime = async () => {
   console.log(res.data)
   anime.value = res.data
   const genres = Object.values(res.data.genres).join(',')
-
   const similar = await axios.get(`${API_SIMILAR_ANIME}${genres}&limit=20`)
   similarAnime.value = similar.data.list.slice(1)
 }

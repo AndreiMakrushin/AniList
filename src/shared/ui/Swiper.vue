@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import noimg from '@/assets/img/noimg.jpeg'
+import noimg from '@/assets/img/noAnime.png'
 import type { addAnime, AnimeStatus } from '@/stores/types'
-import notHere from '@/assets/img/notHere.jpeg'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 
@@ -38,10 +37,10 @@ const filterList = (key: string) => {
         <div
           v-for="i in props.history"
           :key="i"
-          class="relative cursor-pointer flex gap-5 rounded-[10px] overflow-hidden"
+          class="relative cursor-pointer flex gap-5 rounded-[10px] overflow-hidden max-h-[422px]"
           @click="animePush(i.animeId, i.episode)"
         >
-          <img :src="i.img === null ? noimg : i.img" alt="" class="w-[100%]" />
+          <img :src="i.img === null ? noimg : i.img" alt="" class="w-[100%] object-contain" />
           <div class="absolute bottom-0 left-0 flex flex-col bg-white w-[100%]">
             <div class="relative flex">
               <span class="w-full flex h-[5px] bg-slate-300"></span>
@@ -81,7 +80,7 @@ const filterList = (key: string) => {
           </div>
         </div>
         <div v-else class="flex justify-center items-center w-full h-full">
-          <img :src="notHere" alt="" class="rounded-[10px]" />
+          <img :src="noimg" alt="" class="rounded-[10px]" />
         </div>
       </div>
     </SwiperSlide>

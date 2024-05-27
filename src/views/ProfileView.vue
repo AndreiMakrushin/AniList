@@ -52,7 +52,11 @@ watch(
 const reverceAnime = computed<addAnime>(() => {
   return aniHistory.value
     ?.filter((item: addAnime) => item.updated !== null)
-    .sort((a: addAnime, b: addAnime) => new Date(b.updated) - new Date(a.updated))
+    .sort((a: addAnime, b: addAnime) => {
+      const dateA = new Date(a.updated)
+      const dateB = new Date(b.updated)
+      return dateB.getTime() - dateA.getTime()
+    })
 })
 
 const labelStatus = [
