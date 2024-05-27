@@ -11,6 +11,7 @@ import Card from '../widgets/catalog/widgetsCatalog/Card.vue'
 import DropDown from './../shared/ui/DropDown.vue'
 import { addStatusAnime } from '../features/addStatusAnime/addStatusAnime'
 import { supabase } from '../supabase'
+import Content from './../widgets/anime-page-content/Content.vue'
 
 const Player = defineAsyncComponent(() => import('@/widgets/player/Player.vue'))
 
@@ -101,34 +102,7 @@ const sendStatus = async (status: string) => {
       />
     </div>
     <div class="w-[100%] h-full flex flex-col gap-5 p-[10px] mb-2">
-      <div>
-        <h1 class="text-[30px]">{{ anime?.names.ru }}</h1>
-        <p>{{ anime?.names.en }}</p>
-      </div>
-
-      <div class="flex flex-row gap-3 text-gray-500 items-center text-[16px]">
-        <span class="border-[1px] border-gray-500 rounded-[10px] px-2">{{
-          anime?.status.string
-        }}</span>
-        <p class="w-[5px] h-[5px] rounded-full bg-gray-500"></p>
-        <span>{{ anime?.season.year }}</span>
-        <p class="w-[5px] h-[5px] rounded-full bg-gray-500"></p>
-        <span>{{ anime?.type.string }}</span>
-      </div>
-      <ol class="flex flex-row gap-5 flex-wrap">
-        <li>Жанры:</li>
-        <li v-for="i in anime?.genres" :key="i">{{ i }}</li>
-      </ol>
-      <ol class="flex flex-row gap-5 flex-wrap">
-        <li>Озвучка:</li>
-        <li v-for="i in anime?.team.voice" :key="i">{{ i }}</li>
-      </ol>
-      <div>
-        <span>Количество эпизодов: {{ animeLength }}</span> из
-        <span>{{ anime?.type?.episodes }}</span>
-        <p>Последнее обновление: {{ dataAnime(anime?.updated) }}</p>
-      </div>
-      <p>Описание: {{ anime?.description }}</p>
+      <Content :anime="anime" :length="animeLength" :lastUpdate="dataAnime(anime?.updated)"/>
       <Player
         :user="animeStore?.user"
         :previewUrl="'https://dl-20211030-963.anilib.top'"
