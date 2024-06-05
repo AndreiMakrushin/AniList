@@ -57,7 +57,7 @@ const pushAnime = (id: number) => {
         <div class="flex flex-row gap-4 w-[60%]">
           <span
             class="text-[20px] font-medium cursor-pointer text-white hover:text-red-500 duration-short"
-            @click="router.push('/')"
+            @click="router.go(-1)"
             >AniList</span
           >
           <div v-if="!mobie" class="relative flex flex-row grow gap-5">
