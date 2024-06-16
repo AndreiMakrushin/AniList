@@ -103,7 +103,7 @@ const pushAnime = (id: number) => {
       </SvgButton>
       <SvgButton class="cursor-pointer">
         <IconSprite name="icon-settings" />
-        <span class="text-[14px]" @click="router.push(`/lk/${animeStore.user?.id}`)"
+        <span class="text-[14px]" @click="router.push(`/lk/${animeStore.user?.id}/История просмотра`)"
           >Мой Профиль</span
         >
       </SvgButton>

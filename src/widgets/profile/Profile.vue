@@ -57,7 +57,7 @@ onBeforeUnmount(() => {
     <div class="justify-between flex flex-col sm:flex-row gap-2 w-full">
       <div v-if="props.user">
         <ol class="flex flex-col text-white flex-wrap text-[18px]">
-          <li class="leading-[22px]" v-for="item in props.labelStatus" :key="item">
+          <li class="leading-[25px]" v-for="item in props.labelStatus" :key="item">
             {{ item }} - {{ statusAnime[item] || 0 }}
           </li>
         </ol>

@@ -17,17 +17,27 @@ const animeStore = useAnimeStore()
 const aniHistory = ref<addAnime>(null)
 const animeStatus = ref<AnimeStatus>([])
 const isHistory = ref<boolean>(true)
-const status = ref<string>('')
+const status = computed(() => {
+  return routeParamsStatus()
+})
 const deleteAvatar = async () => {
   await supabase.from('users').update({ avatar_url: null }).match({ id: route.params.id })
 }
 
-watch(status, () => {
+function routeParamsStatus() {
+  return route.params.status as string
+}
+const historyValue = () => {
   if (status.value === 'История просмотра') {
     isHistory.value = true
   } else {
     isHistory.value = false
   }
+}
+
+watch(route, () => {
+  routeParamsStatus()
+  historyValue()
 })
 
 const getAnime = async () => {
@@ -64,6 +74,7 @@ const checkAuthorization = async () => {
 }
 
 onMounted(async () => {
+  historyValue()
   await checkAuthorization()
 })
 
@@ -115,6 +126,9 @@ const filterList = (key: string) => {
 const animePush = (e: Event) => {
   router.push({ name: 'anime', params: { id: e.id, episode: e.episode } })
 }
+const statusPush = (e: Event) => {
+  router.push({ name: 'lk', params: { id: animeStore?.user?.id, status: e } })
+}
 </script>
 
 <template>
@@ -128,7 +142,11 @@ const animePush = (e: Event) => {
       :history="reverceAnime"
     />
     <div class="flex flex-col gap-5 mt-10 w-[80%] sm:w-[60%]">
-      <DropDown :status="labelStatus" header="Аниме список" @sendStatus="status = $event" />
+      <DropDown
+        :status="labelStatus"
+        :header="!status ? 'Аниме список' : status"
+        @sendStatus="statusPush($event)"
+      />
 
       <HistoryAnime
         @pushing="animePush($event)"
@@ -137,11 +155,12 @@ const animePush = (e: Event) => {
         v-if="isHistory"
       />
       <AnimeStatuses
+        v-if="!isHistory"
         @pushing="animePush($event)"
         :filterList="filterList"
         :labelStatus="labelStatus"
         :noimg="noimg"
-        :status="status"
+        :status="route.params.status"
       />
     </div>
   </div>

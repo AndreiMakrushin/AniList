@@ -2,7 +2,7 @@
 import type { AnimeStatus } from '@/stores/types'
 import { defineProps, defineEmits } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   labelStatus: string[]
   filterList: AnimeStatus
   noimg: string
@@ -13,6 +13,7 @@ const emit = defineEmits(['pushing'])
 const pushing = (id: number, episode: number) => {
   emit('pushing', { id: id, episode: episode })
 }
+console.log(props.status);
 </script>
 
 <template>
