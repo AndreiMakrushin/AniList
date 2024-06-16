@@ -98,6 +98,7 @@ const sendStatus = async (status: string) => {
         class="hidden md:block"
         v-if="animeStore?.user"
         :status="statuses"
+        header="Добавить в список"
         @sendStatus="sendStatus($event)"
       />
     </div>
@@ -117,6 +118,7 @@ const sendStatus = async (status: string) => {
         class="max-md:block hidden mt-2"
         v-if="animeStore?.user"
         :status="statuses"
+        header="Добавить в список"
         @sendStatus="sendStatus($event)"
       />
     </div>

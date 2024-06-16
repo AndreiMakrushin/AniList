@@ -5,7 +5,7 @@ defineProps<{
 }>()
 </script>
 <template>
-  <button  :class="style" class=" duration-short">
+  <button  :class="style" class="duration-short">
     {{ text }}
   </button>
 </template>

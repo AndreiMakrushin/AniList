@@ -5,25 +5,51 @@ import { supabase } from '@/supabase'
 import { computed, onMounted, ref, watch } from 'vue'
 import type { addAnime, AnimeStatus } from '@/stores/types'
 import { useRouter, useRoute } from 'vue-router'
-import noimg from '@/assets/img/noimg.jpeg'
-import Swiper from '@/shared/ui/Swiper.vue'
+import noimg from '@/assets/img/noAnime.png'
+import DropDown from '../shared/ui/DropDown.vue'
+import HistoryAnime from '@/widgets/profile/HistoryAnime.vue'
+import AnimeStatuses from '@/widgets/profile/AnimeStatuses.vue'
 
 const router = useRouter()
 const route = useRoute()
 const animeStore = useAnimeStore()
 
 const aniHistory = ref<addAnime>(null)
-const animeStatus = ref<AnimeStatus>(null)
+const animeStatus = ref<AnimeStatus>([])
+const isHistory = ref<boolean>(true)
+const status = ref<string>('')
 const deleteAvatar = async () => {
   await supabase.from('users').update({ avatar_url: null }).match({ id: route.params.id })
 }
+
+watch(status, () => {
+  if (status.value === 'История просмотра') {
+    isHistory.value = true
+  } else {
+    isHistory.value = false
+  }
+})
+
 const getAnime = async () => {
   const { data } = await supabase.from('animeUserList').select().eq('userId', route.params.id)
   aniHistory.value = data
+
+  data.reduce((acc) => {
+    acc.push({
+      animeId: 0,
+      created_at: '',
+      id: 0,
+      img: '',
+      nameAnime: '',
+      status: 'История просмотра',
+      userId: animeStore.user.id
+    })
+    return acc
+  }, animeStatus.value)
 }
 const getStatusesAnime = async () => {
   const { data } = await supabase.from('animeStatusList').select().eq('userId', route.params.id)
-  animeStatus.value = data
+  animeStatus.value.push(...data)
 }
 let timeout: any
 const checkAuthorization = async () => {
@@ -60,6 +86,7 @@ const reverceAnime = computed<addAnime>(() => {
 })
 
 const labelStatus = [
+  'История просмотра',
   'Смотрю',
   'Просмотрено',
   'Запланировано',
@@ -79,6 +106,15 @@ const statusAnime = computed<AnimeStatus>(() => {
     return { ...acc, [obj.status]: 1 }
   }, {})
 })
+
+const filterList = (key: string) => {
+  if (key === 'История просмотра') return null
+  return animeStatus.value.filter((item: AnimeStatus) => item.status === key)
+}
+
+const animePush = (e: Event) => {
+  router.push({ name: 'anime', params: { id: e.id, episode: e.episode } })
+}
 </script>
 
 <template>
@@ -87,22 +123,25 @@ const statusAnime = computed<AnimeStatus>(() => {
       :user="animeStore?.user?.id === Number(route.params.id) ? animeStore.user : null"
       @loadAvatar="animeStore.modal = $event"
       @deleteAvatar="deleteAvatar()"
-      :statusAnime="null"
+      :statusAnime="statusAnime"
+      :labelStatus="labelStatus"
+      :history="reverceAnime"
     />
     <div class="flex flex-col gap-5 mt-10 w-[80%] sm:w-[60%]">
-      <div v-if="animeStore?.user">
-        <ol class="flex flex-row gap-3 text-white flex-wrap text-[18px]">
-          <!-- <li>История - {{ reverceAnime?.length }}</li> -->
-          <li v-for="item in labelStatus" :key="item">{{ item }} - {{ statusAnime[item] || 0 }}</li>
-        </ol>
-      </div>
-      <Swiper
-        :history="reverceAnime"
+      <DropDown :status="labelStatus" header="Аниме список" @sendStatus="status = $event" />
+
+      <HistoryAnime
+        @pushing="animePush($event)"
+        :anime="reverceAnime"
+        :img="noimg"
+        v-if="isHistory"
+      />
+      <AnimeStatuses
+        @pushing="animePush($event)"
+        :filterList="filterList"
         :labelStatus="labelStatus"
-        :list="animeStatus"
-        @pushing="
-          router.push({ name: 'anime', params: { id: $event.id, episode: $event.episode } })
-        "
+        :noimg="noimg"
+        :status="status"
       />
     </div>
   </div>
