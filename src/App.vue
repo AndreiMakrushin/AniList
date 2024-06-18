@@ -10,8 +10,15 @@ import { upScroll } from '@/features/upScroll/upScroll'
 
 const animeStore = useAnimeStore()
 
+const handleKeyDown = (event) => {
+  if (event.key === ' ' && event.target === document.body) {
+    event.preventDefault()
+  }
+}
+
 onMounted(() => {
   animeStore.getUser()
+  document.addEventListener('keydown', handleKeyDown)
 })
 </script>
 

@@ -33,13 +33,6 @@ const playing = ref<boolean>(false)
 const isQualityVideo = ref<boolean>(false)
 const showInterface = ref<boolean>(false)
 
-watch(
-  () => props.episode,
-  (newEpisode: number | string) => {
-    episodeAnime.value = newEpisode || 1
-    resetParameters()
-  }
-)
 const previewAnime = computed(() => {
   return props.AnimePlay?.list[episodeAnime.value]?.preview
     ? `${props.previewUrl}${props.AnimePlay?.list[episodeAnime.value]?.preview}`
@@ -68,12 +61,19 @@ function resetParameters() {
   isPreview.value = false
   playing.value = false
   timer.value = 0
+  episodeAnime.value = props.episode || 1
+  if (videoElement.value) {
+    videoElement.value.currentTime = 0
+  }
 }
 
 onMounted(() => {
   loadPlayer()
 })
-watch([props, episodeAnime, quality], () => loadPlayer())
+watch([props, episodeAnime, quality], () => {
+  loadPlayer()
+  resetParameters()
+})
 
 const emit = defineEmits(['updateEpisode'])
 
@@ -251,7 +251,7 @@ const rewindTheVideo = (e: number) => {
 const handleKeyPress = (event: KeyboardEvent) => {
   if (event.code === 'Space' && playing.value) {
     videoPaused()
-  } else if (event.code === 'Space' && !playing.value) {
+  } else if (event.code === 'Space' && !playing.value && isPreview.value) {
     playVideo()
     showInterface.value = false
   } else if (event.code === 'ArrowRight' && videoElement.value) {

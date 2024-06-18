@@ -14,6 +14,7 @@ import Switch from '../../shared/ui/Switch.vue'
 import Button from '@/shared/ui/Button.vue'
 import AnimeOnDemand from './anime-on-demand/AnimeOnDemand.vue'
 
+
 const router = useRouter()
 const animeStore = useAnimeStore()
 
