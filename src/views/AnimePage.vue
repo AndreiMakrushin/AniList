@@ -13,9 +13,7 @@ import { addStatusAnime } from '../features/addStatusAnime/addStatusAnime'
 import { supabase } from '../supabase'
 import Content from './../widgets/anime-page-content/Content.vue'
 import { upScroll } from '../features/upScroll/upScroll'
-import Input from '../shared/ui/Input.vue'
-import Button from '../shared/ui/Button.vue'
-import Avatar from '../shared/ui/Avatar.vue'
+import Commentaries from '../widgets/commentaries/Commentaries.vue'
 
 const Player = defineAsyncComponent(() => import('@/widgets/player/Player.vue'))
 
@@ -26,7 +24,7 @@ const router = useRouter()
 const anime = ref<Anime | null>(null)
 const similarAnime = ref<Anime[] | null>(null)
 const hovered = ref<Anime[] | null>(null)
-const commentary = ref<string>('')
+
 
 const loadAnime = async () => {
   const res = await axios.get(`${API_anime}${route.params.id}`)
@@ -40,12 +38,11 @@ const loadAnime = async () => {
 
 onMounted(async () => {
   await loadAnime()
-  await addCommentaries()
 })
 
 watch(route, async () => {
   await loadAnime()
-  await addCommentaries()
+  
 })
 
 const dataAnime = (data: number) => {
@@ -91,86 +88,7 @@ const sendStatus = async (status: string) => {
   addStatusAnime(animeStatus)
 }
 
-const sendCommentary = async () => {
-  try {
-    const { data, error } = await supabase.from('animeCommentaries').insert({
-      animeId: anime.value?.id,
-      userId: animeStore.user?.id,
-      userName: animeStore.user?.name,
-      img: animeStore.user?.avatar_url,
-      commentary: commentary.value,
-      parentId: Math.floor(Math.random() * 1000000000000000000)
-    })
-    if (error) {
-      return console.log('ошибка:', error.message)
-    } else {
-      return data
-    }
-  } catch (error) {
-    console.log('ошибка:', error)
-  }
-}
 
-const commentArray = ref<Array<any>>([])
-
-supabase
-  .channel('animeCommentaries')
-  .on(
-    'postgres_changes',
-    { event: '*', schema: 'public', table: 'animeCommentaries' },
-    (payload: any) => {
-      console.log(payload)
-    }
-  )
-  .subscribe()
-
-async function addCommentaries() {
-  try {
-    const { data, error } = await supabase
-      .from('animeCommentaries')
-      .select()
-      .filter('animeId', 'eq', anime.value?.id)
-    if (error) {
-      console.log('ошибка:', error)
-    }
-    console.log(data)
-    commentArray.value = data
-  } catch (error) {
-    console.log('ошибка:', error)
-  }
-}
-
-const replyToMessage = async (answerUserId: number, answerUserName: string, commentId: number) => {
-  const { data, error } = await supabase
-    .from('animeCommentaries')
-    .select()
-    .filter('parentId', 'eq', commentId)
-    .single()
-  console.log(commentId)
-  console.log(data)
-  console.log(error)
-  try {
-    const { data, error } = await supabase.from('animeCommentaries').insert({
-      animeId: anime.value?.id,
-      commentary: `${answerUserName + ': ' + commentary.value}`,
-      userId: answerUserId,
-      img: animeStore.user?.avatar_url,
-      userName: answerUserName,
-      parentId: commentId,
-      answerId: animeStore.user?.id,
-      answerName: animeStore.user?.name,
-      childrenId: Math.floor(Math.random() * 1000000000000000000)
-    })
-
-    if (error) {
-      return console.log('ошибка:', error.message)
-    } else {
-      console.log(data)
-    }
-  } catch (error) {
-    console.log('ошибка:', error)
-  }
-}
 </script>
 
 <template>
@@ -209,77 +127,7 @@ const replyToMessage = async (answerUserId: number, answerUserName: string, comm
         header="Добавить в список"
         @sendStatus="sendStatus($event)"
       />
-
-      <div class="flex flex-col gap-5 bg-slate-600 p-3 rounded-[10px]">
-        <span>Коментарии</span>
-        <div
-          class="flex flex-col gap-2"
-          v-for="i in commentArray.filter((item) => item.childrenId === null)"
-          :key="i"
-        >
-          <div class="flex flex-row gap-3">
-            <div class="flex flex-col justify-center items-center">
-              <Avatar :img="i.img" :style="'w-[50px] h-[50px]'" />
-              <span>{{ i.userName }}</span>
-            </div>
-            <div class="flex flex-col grow border-b-[1px] border-white justify-between">
-              <span>{{ i.commentary }}</span>
-              <div class="flex justify-end" v-if="animeStore?.user">
-                <span
-                  class="text-[15px] self-end cursor-pointer"
-                  @click="replyToMessage(i.userId, i.userName, i.parentId)"
-                  >Ответить</span
-                >
-              </div>
-            </div>
-          </div>
-          <div
-            class="pl-[10%] flex flex-row gap-3 justify-center items-center"
-            v-for="j in commentArray.filter(
-              (item) => item.childrenId !== null && item.parentId === i.parentId
-            )"
-            :key="j"
-          >
-            <div class="flex flex-col justify-center items-center">
-              <Avatar :img="animeStore?.user?.avatar_url" :style="'w-[30px] h-[30px]'" />
-              <span>{{ j.userName }}</span>
-            </div>
-            <div class="flex flex-col grow justify-between">
-              <span>{{ j.commentary }}</span>
-              <div class="flex justify-end">
-                <span
-                  class="text-[15px] self-end cursor-pointer"
-                  @click="replyToMessage(j.userId, j.userName, i.parentId)"
-                  >Ответить</span
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-        <span class="m-auto" v-if="commentArray.length === 0"
-          >Пока комментариев нет, будь одним из первых и напиши свой комментарий!</span
-        >
-        <div class="flex flex-col gap-3 items-start" v-if="animeStore?.user">
-          <span>Напиши отзыв!</span>
-          <div class="flex flex-row w-full grow gap-3 items-center">
-            <div class="flex flex-col justify-center items-center">
-              <Avatar :img="animeStore?.user?.avatar_url" :style="'w-[50px] h-[50px]'" />
-              <span>{{ animeStore?.user?.name }}</span>
-            </div>
-            <Input
-              :style="'text-black'"
-              v-model="commentary"
-              placeholder="Комментарий"
-              type="text"
-            />
-          </div>
-          <Button
-            @click="sendCommentary"
-            text="Отправить"
-            :style="'hover:shadow-shadowDrop p-1 hover:bg-slate-500 rounded-[15px]'"
-          />
-        </div>
-      </div>
+      <Commentaries :anime="anime?.id" :animeStore="animeStore?.user"/>
     </div>
   </div>
 

@@ -27,6 +27,19 @@ export interface Credentials {
     email: string
     password: string
 }
+export interface Item {
+  id: number
+  created_at: string
+  userId: number
+  animeId: number
+  commentary: string
+  parentId: number | null
+  img: string
+  userName: string
+  answerId: number | null
+  answerName: string | null
+  childrenId: number | null
+}
 
 interface AnimeBase {
     id: number;
