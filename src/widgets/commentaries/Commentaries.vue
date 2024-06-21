@@ -4,7 +4,8 @@ import Button from '@/shared/ui/Button.vue'
 import Avatar from '@/shared/ui/Avatar.vue'
 import { supabase } from '@/supabase'
 import type { Anime, User, Item } from '@/stores/types'
-import { onMounted, ref, defineProps, watch } from 'vue'
+import { onMounted, ref, defineProps, watch, computed } from 'vue'
+import Parent from './Parent.vue'
 
 const props = defineProps<{
   anime?: Anime | null
@@ -62,8 +63,7 @@ async function addCommentaries() {
       console.log('ошибка:', error)
     }
     commentArray.value = data
-    console.log(commentArray.value)
-   /*  console.log(buildTree(commentArray.value)) */
+    console.log(buildTree(commentArray.value))
   } catch (error) {
     console.log('ошибка:', error)
   }
@@ -98,27 +98,34 @@ const replyToMessage = async (answerUserId: number, answerUserName: string, comm
   }
 }
 
-/* function buildTree(data, parentId = null) {
-  const tree = [];
+function buildTree(comments: Item[]): Item[] {
+  const commentsMap: Record<number, Item & { children: Item[] }> = {}
 
-  data.forEach(item => {
-    if (item.parentId === parentId) {
-      const children = buildTree(data, item.id);
-      if (children.length) {
-        item.children = children;
+  comments.map((comment) => {
+    commentsMap[comment.randomId] = { ...comment, children: [] }
+  })
+
+  const rootComments: Item[] = []
+
+  comments.map((comment) => {
+    if (comment.parentId === null) {
+      rootComments.push(commentsMap[comment.randomId])
+    } else {
+      const parentComment = commentsMap[comment.parentId]
+      if (parentComment) {
+        parentComment.children.push(commentsMap[comment.randomId])
       }
-      tree.push(item);
     }
-  });
+  })
 
-  return tree;
-} */
-
+  return rootComments
+}
 </script>
 <template>
   <div class="flex flex-col gap-5 bg-slate-600 p-3 rounded-[10px]">
     <span>Коментарии</span>
-    <div
+    <Parent :commentArray="buildTree(commentArray)" />
+    <!-- <div
       class="flex flex-col gap-2"
       v-for="i in commentArray.filter((item) => item.parentId === null)"
       :key="i"
@@ -161,7 +168,7 @@ const replyToMessage = async (answerUserId: number, answerUserName: string, comm
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- replyToMessage(i.userId, i.userName, i.randomId) -->
 
