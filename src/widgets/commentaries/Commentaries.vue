@@ -124,7 +124,10 @@ function buildTree(comments: Item[]): Item[] {
 <template>
   <div class="flex flex-col gap-5 bg-slate-600 p-3 rounded-[10px]">
     <span>Коментарии</span>
-    <Parent :commentArray="buildTree(commentArray)" />
+    <Parent
+      :commentArray="buildTree(commentArray)"
+      @replyToMessage="replyToMessage($event.userId, $event.userName, $event.randomId)"
+    />
     <!-- <div
       class="flex flex-col gap-2"
       v-for="i in commentArray.filter((item) => item.parentId === null)"
