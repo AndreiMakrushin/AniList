@@ -2,7 +2,7 @@
 import type { Item } from '@/stores/types'
 import { defineProps } from 'vue'
 import Avatar from '@/shared/ui/Avatar.vue'
-import Childrens from './Childrens.vue'
+import RecursiveCommentaries from './RecursiveCommentaries.vue'
 
 const props = defineProps<{
   commentaryArray: Item
@@ -43,7 +43,7 @@ const replyToMessage = (userId: string, userName: string, randomId: string) => {
       v-if="props.commentaryArray.children && props.commentaryArray.children.length > 0"
       class="pl-[10%]"
     >
-      <Childrens
+      <RecursiveCommentaries
         v-for="children in props.commentaryArray.children"
         :key="children"
         :commentaryArray="children"

@@ -13,7 +13,7 @@ import { addStatusAnime } from '../features/addStatusAnime/addStatusAnime'
 import { supabase } from '../supabase'
 import Content from './../widgets/anime-page-content/Content.vue'
 import { upScroll } from '../features/upScroll/upScroll'
-import Commentaries from '../widgets/commentaries/Commentaries.vue'
+import CommentsSection from '../widgets/commentaries/CommentsSection.vue'
 
 const Player = defineAsyncComponent(() => import('@/widgets/player/Player.vue'))
 
@@ -127,7 +127,7 @@ const sendStatus = async (status: string) => {
         header="Добавить в список"
         @sendStatus="sendStatus($event)"
       />
-      <Commentaries :anime="anime?.id" :animeStore="animeStore?.user"/>
+      <CommentsSection :anime="anime?.id" :animeStore="animeStore?.user"/>
     </div>
   </div>
 
